@@ -27,7 +27,7 @@ jobs:
           if git ls-remote --heads "$repo_url" gh-pages | grep -q .; then
             git clone --depth=1 --branch gh-pages "$repo_url" gh-pages
           else
-            mkdir -p gh-pages/charts
+            mkdir -p gh-pages
             git -C gh-pages init -b gh-pages
             git -C gh-pages remote add origin "$repo_url"
           fi
@@ -42,11 +42,13 @@ jobs:
           version: v3.16.4
 
       - name: Package chart
-        run: helm package main/chart --destination gh-pages/charts
+        run: |
+          rm -rf gh-pages/charts
+          helm package main/chart --destination gh-pages
 
       - name: Update index
         run: |
-          helm repo index gh-pages/charts --url https://mzglinski.github.io/kodus-helm-chart/charts
+          helm repo index gh-pages --url https://mzglinski.github.io/kodus-helm-chart
 
       - name: Commit and push gh-pages
         working-directory: gh-pages
@@ -62,4 +64,4 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
-          files: gh-pages/charts/kodus-*.tgz
+          files: gh-pages/kodus-*.tgz

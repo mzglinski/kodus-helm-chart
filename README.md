@@ -21,7 +21,7 @@ make docs
 ### From the published Helm repository
 
 ```bash
-helm repo add kodus https://mzglinski.github.io/kodus-helm-chart/charts
+helm repo add kodus https://mzglinski.github.io/kodus-helm-chart
 helm repo update
 helm install kodus kodus/kodus -f my-values.yaml
 ```
