@@ -8,7 +8,3 @@ check-version-increment: false
 validate-maintainers: false
 
 target-branch: main
-
-# ct lints and installs the chart once per chart/ci/*-values.yaml file
-# (kind-values.yaml). chart/ci/lint.yaml is deliberately named outside that
-# glob; it is used by the explicit `helm template` CI step and local checks.
