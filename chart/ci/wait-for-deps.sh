@@ -24,7 +24,8 @@ wait_for_ready_pods() {
 kubectl -n "$namespace" wait --for=condition=Ready cluster/postgres --timeout=600s
 kubectl -n "$namespace" wait --for=jsonpath='{.status.applied}'=true database/kodus-db --timeout=300s
 wait_for_ready_pods "cnpg.io/poolerName=postgres-pooler-rw" 300 || true
-wait_for_ready_pods "app=mongodb-svc" 300
+kubectl -n "$namespace" wait --for=jsonpath='{.status.phase}'=Running mongodbcommunity/mongodb --timeout=600s
+wait_for_ready_pods "app=mongodb-svc" 600
 kubectl -n "$namespace" wait --for=condition=ClusterAvailable rabbitmqcluster/rabbitmq --timeout=600s
 wait_for_ready_pods "app.kubernetes.io/name=rabbitmq" 600
 
