@@ -1,0 +1,51 @@
+{{- if .Values.webhooks.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kodus.fullname" . }}-webhooks
+  labels:
+    {{- include "kodus.labels" . | nindent 4 }}
+    app.kubernetes.io/component: webhooks
+spec:
+  {{- if not .Values.webhooks.autoscaling.enabled }}
+  replicas: {{ .Values.webhooks.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "kodus.componentSelectorLabels" (dict "root" . "component" "webhooks") | nindent 6 }}
+  template:
+    metadata:
+      {{- include "kodus.deploymentPodMetadata" (dict "root" . "component" "webhooks") | nindent 6 }}
+    spec:
+      {{- include "kodus.deploymentPodSpec" (dict "root" . "component" "webhooks") | nindent 6 }}
+      {{- $extraVolumes := include "kodus.extraVolumes" (dict "root" . "component" "webhooks") -}}
+      {{- if $extraVolumes }}
+      volumes:
+        {{- $extraVolumes | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: webhooks
+          image: {{ include "kodus.image" (dict "root" . "component" "webhook") }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["node", "dist/apps/webhooks/main.js"]
+          ports:
+            - name: http
+              containerPort: {{ .Values.webhooks.port }}
+              protocol: TCP
+          env:
+            {{- include "kodus.webhooksEnv" . | nindent 12 }}
+            {{- include "kodus.extraEnv" (dict "root" . "component" "webhooks") | nindent 12 }}
+          {{- $containerSecurityContext := include "kodus.containerSecurityContext" (dict "root" . "component" "webhooks") -}}
+          {{- if $containerSecurityContext }}
+          securityContext:
+            {{- $containerSecurityContext | nindent 12 }}
+          {{- end }}
+          {{- $extraVolumeMounts := include "kodus.extraVolumeMounts" (dict "root" . "component" "webhooks") -}}
+          {{- if $extraVolumeMounts }}
+          volumeMounts:
+            {{- $extraVolumeMounts | nindent 12 }}
+          {{- end }}
+          resources:
+            {{- toYaml .Values.webhooks.resources | nindent 12 }}
+          {{- include "kodus.webhooksProbes" . | nindent 10 }}
+{{- end }}

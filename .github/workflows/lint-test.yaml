@@ -1,0 +1,143 @@
+name: Lint and Test Charts
+
+on:
+  pull_request:
+    branches: [main, master]
+  push:
+    branches: [main, master]
+    paths:
+      - "chart/**"
+      - "ct.yaml"
+      - ".github/workflows/lint-test.yaml"
+      - "Makefile"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  changes:
+    name: Detect chart changes
+    runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.list-changed.outputs.changed }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Set up chart-testing
+        uses: helm/chart-testing-action@v2.7.0
+
+      - name: Run chart-testing (list-changed)
+        id: list-changed
+        run: |
+          changed=$(ct list-changed --target-branch ${{ github.event.repository.default_branch }})
+          if [[ -n "$changed" ]]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+  lint:
+    name: Lint
+    needs: changes
+    if: needs.changes.outputs.changed == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v4
+        with:
+          # renovate: datasource=github-releases depName=helm/helm
+          version: v3.16.4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Set up chart-testing
+        uses: helm/chart-testing-action@v2.7.0
+
+      - name: Install helm-docs
+        run: |
+          # renovate: datasource=github-releases depName=norwoodj/helm-docs
+          curl -fsSL https://github.com/norwoodj/helm-docs/releases/download/v1.14.2/helm-docs_1.14.2_Linux_x86_64.tar.gz | tar xz
+          sudo mv helm-docs /usr/local/bin/
+
+      - name: Verify helm-docs is up to date
+        run: make docs-check
+
+      - name: Run chart-testing (lint)
+        run: ct lint --target-branch ${{ github.event.repository.default_branch }}
+
+      - name: Helm template (lint values)
+        run: helm template kodus chart -f chart/ci/lint.yaml
+
+  install-test:
+    name: Install test
+    needs: [changes, lint]
+    if: needs.changes.outputs.changed == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v4
+        with:
+          # renovate: datasource=github-releases depName=helm/helm
+          version: v3.16.4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Set up chart-testing
+        uses: helm/chart-testing-action@v2.7.0
+
+      - name: Create kind cluster
+        uses: helm/kind-action@v1.14.0
+
+      - name: Install CloudNativePG operator
+        run: |
+          helm repo add cnpg https://cloudnative-pg.github.io/charts
+          helm repo update
+          # renovate: datasource=helm depName=cloudnative-pg registryUrl=https://cloudnative-pg.github.io/charts
+          helm install cnpg cnpg/cloudnative-pg --namespace cnpg-system --create-namespace --version 0.29.0 --wait --timeout 5m
+
+      - name: Install MongoDB Community Operator
+        run: |
+          helm repo add mongodb https://mongodb.github.io/helm-charts
+          helm repo update
+          # renovate: datasource=helm depName=community-operator registryUrl=https://mongodb.github.io/helm-charts
+          helm install mongodb-operator mongodb/community-operator --namespace mongodb --create-namespace --version 0.13.0 --wait --timeout 5m
+
+      - name: Install RabbitMQ Cluster Operator
+        run: |
+          # renovate: datasource=github-releases depName=rabbitmq/cluster-operator
+          kubectl apply -f https://github.com/rabbitmq/cluster-operator/releases/download/v2.17.1/cluster-operator.yml
+          kubectl -n rabbitmq-system wait --for=condition=ready pod -l app.kubernetes.io/name=rabbitmq-cluster-operator --timeout=300s
+
+      - name: Deploy CI dependencies
+        run: |
+          kubectl apply -f chart/ci/services/deps.yaml
+          bash chart/ci/wait-for-deps.sh default
+
+      - name: Run chart-testing (install)
+        run: ct install --debug --namespace default --target-branch ${{ github.event.repository.default_branch }} --helm-extra-args "--timeout 1200s"
+
+      - name: Wait for Kodus pods
+        run: |
+          kubectl wait --for=condition=ready pod -l app.kubernetes.io/instance=kodus --timeout=900s
+          kubectl get pods -l app.kubernetes.io/instance=kodus
+          kubectl get deploy -l app.kubernetes.io/instance=kodus

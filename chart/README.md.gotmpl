@@ -1,0 +1,48 @@
+{{ template "chart.header" . }}
+{{ template "chart.description" . }}
+
+## Prerequisites
+
+External PostgreSQL (with pgvector), MongoDB 8.x, and RabbitMQ (with `rabbitmq_delayed_message_exchange` plugin) are required.
+
+## Resources
+
+The chart does not ship CPU/memory requests or limits — set `<component>.resources` (and `jobs.*.resources` for hook Jobs) for your cluster and workload. Tools such as [KRR](https://github.com/robusta-dev/krr) can help derive starting values from live usage. Requests are required when using HPA resource metrics.
+
+## Secrets
+
+Set `secrets.existingSecret` to a pre-provisioned Secret for production. When empty, a **pre-install/pre-upgrade** hook generates installer-compatible secrets (see [kodus-installer `schema-vars.sh`](https://github.com/kodustech/kodus-installer/blob/main/scripts/schema-vars.sh)), preserves existing keys on upgrade via `lookup`, and keeps the Secret across releases (`helm.sh/resource-policy: keep`). With `helm template` or Argo CD dry-run, `lookup` returns empty and the hook manifest shows freshly generated values.
+
+Database **URI mode** (`externalPostgresql.uri`, `externalMongodb.uri`, `externalRabbitmq.uri`) stores connection strings in the app Secret (`pg-uri`, `mongo-uri`, `rabbitmq-uri`) and wires pods via `secretKeyRef`. When `secrets.existingSecret` is set, add those keys to your Secret manually. RabbitMQ credentials can alternatively live in `externalRabbitmq.existingSecret` (`usernameKey` / `passwordKey`); the hook builds `rabbitmq-uri`.
+
+`externalPostgresql.uri` is incompatible with `jobs.migrations` and analytics workers: the analytics warehouse has no URL env var and requires discrete `API_PG_DB_*` fields — use host/port/username/database instead.
+
+MongoDB `authSource` is emitted as `API_MG_DB_PRODUCTION_CONFIG` (`?authSource=…`), matching `MongooseFactory` production URI assembly.
+
+## Service ports
+
+Container/service ports (`api.port`, `webhooks.port`) are the single source of truth for `API_PORT` / `API_WEBHOOKS_PORT` / `WEB_PORT_API` — do not duplicate them under `config.*`.
+
+## Database migrations and seeds
+
+Migrations and seeds run as **pre-install/pre-upgrade hook Jobs** (`jobs.migrations`, `jobs.seeds`) before Deployments roll out; application pods never migrate on boot.
+
+## Service accounts
+
+`serviceAccount.create` defaults to `false` — workloads and hook jobs use the namespace `default` account. Set `serviceAccount.name` and/or `serviceAccount.hooks.name` to use pre-existing accounts. To create chart-managed accounts, set `serviceAccount.create: true`; add `serviceAccount.hooks.create: true` for a separate hook SA (created as a pre-upgrade hook before migrations, `{release}-hooks` by default).
+
+## Scheduled jobs (crons)
+
+Kodus uses NestJS `@Cron` inside the **api**, **worker**, and **webhooks** processes. By default crons run in those Deployments (`cronRunner.enabled: false`).
+
+Set `cronRunner.enabled: true` when `api` / `worker` / `webhooks` run with more than one replica (fixed `replicaCount` or HPA `minReplicas` > 1): the chart adds single-replica **cron-api** and **cron-worker** pods with real schedules, and gives HA pods leap-day expressions (`0 0 29 2 *`) so jobs do not duplicate. Many jobs also use Postgres advisory locks, but coverage is not complete.
+
+## Ingress (nginx)
+
+When using the bundled nginx ingress class, default annotations raise proxy buffer sizes for NextAuth session cookies (`Set-Cookie` response headers can exceed nginx’s 4k default). Override `ingress.annotations` if your controller uses different keys.
+
+For TLS automation with cert-manager, add annotations such as `kubernetes.io/tls-acme: "true"` and `cert-manager.io/cluster-issuer: <issuer>` — they are documented in `values.yaml` but not enabled by default.
+
+API ingress paths are gated on `api.enabled` and `webhooks.enabled` so disabled components are not routed.
+
+{{ template "chart.valuesSection" . }}

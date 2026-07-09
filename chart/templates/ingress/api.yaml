@@ -1,0 +1,47 @@
+{{- if and .Values.ingress.enabled .Values.ingress.api.enabled .Values.ingress.api.hostname (or .Values.api.enabled .Values.webhooks.enabled) }}
+{{- $fullName := include "kodus.fullname" . -}}
+{{- $webhookPaths := .Values.ingress.api.webhookPaths | default list -}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ $fullName }}-api
+  labels:
+    {{- include "kodus.labels" . | nindent 4 }}
+    app.kubernetes.io/component: api
+  {{- with .Values.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  ingressClassName: {{ .Values.ingress.className }}
+  {{- if .Values.ingress.api.tls }}
+  tls:
+    - hosts:
+        - {{ .Values.ingress.api.hostname | quote }}
+      secretName: {{ default (printf "%s-api-tls" $fullName) .Values.ingress.api.secretName }}
+  {{- end }}
+  rules:
+    - host: {{ .Values.ingress.api.hostname | quote }}
+      http:
+        paths:
+          {{- if .Values.webhooks.enabled }}
+          {{- range $webhookPaths }}
+          - path: {{ . }}
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $fullName }}-webhooks
+                port:
+                  number: {{ $.Values.webhooks.port }}
+          {{- end }}
+          {{- end }}
+          {{- if .Values.api.enabled }}
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $fullName }}-api
+                port:
+                  number: {{ .Values.api.port }}
+          {{- end }}
+{{- end }}

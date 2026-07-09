@@ -1,0 +1,51 @@
+{{- if .Values.api.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kodus.fullname" . }}-api
+  labels:
+    {{- include "kodus.labels" . | nindent 4 }}
+    app.kubernetes.io/component: api
+spec:
+  {{- if not .Values.api.autoscaling.enabled }}
+  replicas: {{ .Values.api.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "kodus.componentSelectorLabels" (dict "root" . "component" "api") | nindent 6 }}
+  template:
+    metadata:
+      {{- include "kodus.deploymentPodMetadata" (dict "root" . "component" "api") | nindent 6 }}
+    spec:
+      {{- include "kodus.deploymentPodSpec" (dict "root" . "component" "api") | nindent 6 }}
+      {{- $extraVolumes := include "kodus.extraVolumes" (dict "root" . "component" "api") -}}
+      {{- if $extraVolumes }}
+      volumes:
+        {{- $extraVolumes | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: api
+          image: {{ include "kodus.image" (dict "root" . "component" "api") }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["node", "dist/apps/api/main.js"]
+          ports:
+            - name: http
+              containerPort: {{ .Values.api.port }}
+              protocol: TCP
+          env:
+            {{- include "kodus.apiEnv" . | nindent 12 }}
+            {{- include "kodus.extraEnv" (dict "root" . "component" "api") | nindent 12 }}
+          {{- $containerSecurityContext := include "kodus.containerSecurityContext" (dict "root" . "component" "api") -}}
+          {{- if $containerSecurityContext }}
+          securityContext:
+            {{- $containerSecurityContext | nindent 12 }}
+          {{- end }}
+          {{- $extraVolumeMounts := include "kodus.extraVolumeMounts" (dict "root" . "component" "api") -}}
+          {{- if $extraVolumeMounts }}
+          volumeMounts:
+            {{- $extraVolumeMounts | nindent 12 }}
+          {{- end }}
+          resources:
+            {{- toYaml .Values.api.resources | nindent 12 }}
+          {{- include "kodus.apiProbes" . | nindent 10 }}
+{{- end }}

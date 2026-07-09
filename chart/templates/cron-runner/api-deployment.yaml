@@ -1,0 +1,38 @@
+{{- if and .Values.cronRunner.enabled .Values.cronRunner.api.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kodus.fullname" . }}-cron-api
+  labels:
+    {{- include "kodus.labels" . | nindent 4 }}
+    app.kubernetes.io/component: cron-api
+spec:
+  replicas: {{ .Values.cronRunner.api.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "kodus.componentSelectorLabels" (dict "root" . "component" "cron-api") | nindent 6 }}
+  template:
+    metadata:
+      {{- include "kodus.deploymentPodMetadata" (dict "root" . "component" "cron-api") | nindent 6 }}
+    spec:
+      {{- include "kodus.deploymentPodSpec" (dict "root" . "component" "cron-api") | nindent 6 }}
+      containers:
+        - name: cron-api
+          image: {{ include "kodus.image" (dict "root" . "component" "api") }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["node", "dist/apps/api/main.js"]
+          ports:
+            - name: http
+              containerPort: {{ .Values.api.port }}
+              protocol: TCP
+          env:
+            {{- include "kodus.cronRunnerApiEnv" . | nindent 12 }}
+          {{- $containerSecurityContext := include "kodus.containerSecurityContext" (dict "root" . "component" "cron-api") -}}
+          {{- if $containerSecurityContext }}
+          securityContext:
+            {{- $containerSecurityContext | nindent 12 }}
+          {{- end }}
+          resources:
+            {{- toYaml .Values.cronRunner.api.resources | nindent 12 }}
+          {{- include "kodus.apiProbes" . | nindent 10 }}
+{{- end }}

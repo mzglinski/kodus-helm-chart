@@ -1,0 +1,19 @@
+{{- $components := dict "api" .Values.api "worker" .Values.worker "webhooks" .Values.webhooks "web" .Values.web "worker-analytics" .Values.workerAnalytics }}
+{{- range $component, $values := $components }}
+{{- $minReplicas := include "kodus.componentMinReplicas" (dict "values" $values) | int }}
+{{- if and $values.enabled $values.podDisruptionBudget.enabled (gt $minReplicas 1) }}
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "kodus.fullname" $ }}-{{ $component }}
+  labels:
+    {{- include "kodus.labels" $ | nindent 4 }}
+    app.kubernetes.io/component: {{ $component }}
+spec:
+  minAvailable: {{ $values.podDisruptionBudget.minAvailable }}
+  selector:
+    matchLabels:
+      {{- include "kodus.componentSelectorLabels" (dict "root" $ "component" $component) | nindent 6 }}
+{{- end }}
+{{- end }}
