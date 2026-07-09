@@ -1,0 +1,26 @@
+apiVersion: v1
+entries:
+  kodus:
+  - apiVersion: v2
+    appVersion: 2.1.24
+    created: "2026-07-09T17:40:00.462986104Z"
+    description: Helm chart for self-hosted Kodus AI (stateless components only)
+    digest: c2c2c7377125c5f6e6c7d990acfc8cbd275b4f6b28b320dd0da22320a1127433
+    home: https://kodus.io
+    keywords:
+    - kodus
+    - ai
+    - code-review
+    kubeVersion: '>=1.28.0-0'
+    maintainers:
+    - name: Community contributors
+      url: https://github.com/mzglinski/kodus-helm-chart
+    name: kodus
+    sources:
+    - https://github.com/kodustech/kodus-ai
+    - https://github.com/mzglinski/kodus-helm-chart
+    type: application
+    urls:
+    - https://mzglinski.github.io/kodus-helm-chart/charts/kodus-0.1.0.tgz
+    version: 0.1.0
+generated: "2026-07-09T17:40:00.461069332Z"
