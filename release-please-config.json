@@ -4,7 +4,7 @@
     "chart": {
       "release-type": "helm",
       "package-name": "kodus",
-      "changelog-path": "chart/CHANGELOG.md",
+      "changelog-path": "CHANGELOG.md",
       "include-component-in-tag": false
     }
   }
