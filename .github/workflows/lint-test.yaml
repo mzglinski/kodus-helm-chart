@@ -17,10 +17,10 @@ concurrency:
 
 jobs:
   changes:
-    name: Detect chart changes
+    name: Detect CI-triggering changes
     runs-on: ubuntu-latest
     outputs:
-      changed: ${{ steps.list-changed.outputs.changed }}
+      changed: ${{ steps.detect.outputs.changed }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -29,10 +29,11 @@ jobs:
 
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.14"
+          # chart-testing/yamale is not Python 3.14-ready yet; keep in sync with chart-testing-action.
+          python-version: "3.12"
 
       - name: Set up chart-testing
-        uses: helm/chart-testing-action@v2.7.0
+        uses: helm/chart-testing-action@v2.8.0
 
       - name: Reject manual chart version bumps
         if: github.event_name == 'pull_request'
@@ -54,11 +55,35 @@ jobs:
             exit 1
           fi
 
-      - name: Run chart-testing (list-changed)
-        id: list-changed
+      - name: Detect chart or CI fixture changes
+        id: detect
+        env:
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
         run: |
-          changed=$(ct list-changed --config ct.yaml --target-branch ${{ github.event.repository.default_branch }})
-          if [[ -n "$changed" ]]; then
+          set -euo pipefail
+          if [ "${RUNNER_DEBUG:-0}" = "1" ]; then set -x; fi
+
+          run_ci=false
+
+          if chart_changed="$(ct list-changed --config ct.yaml --target-branch "$DEFAULT_BRANCH")"; [[ -n "$chart_changed" ]]; then
+            echo "Chart changes: ${chart_changed}"
+            run_ci=true
+          fi
+
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            compare_range="origin/${DEFAULT_BRANCH}...HEAD"
+          elif [[ "${{ github.event.before }}" != "0000000000000000000000000000000000000000" ]]; then
+            compare_range="${{ github.event.before }}..${{ github.sha }}"
+          else
+            compare_range="HEAD~1..HEAD"
+          fi
+
+          if git diff --name-only ${compare_range} | grep -qE '^(\\.github/workflows/lint-test\\.yaml|Makefile|ct\\.yaml|chart/ci/)'; then
+            echo "CI workflow or fixture changes detected in: ${compare_range}"
+            run_ci=true
+          fi
+
+          if [[ "$run_ci" == "true" ]]; then
             echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
 
@@ -81,10 +106,10 @@ jobs:
 
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.14"
+          python-version: "3.12"
 
       - name: Set up chart-testing
-        uses: helm/chart-testing-action@v2.7.0
+        uses: helm/chart-testing-action@v2.8.0
 
       - name: Install helm-docs
         run: |
@@ -120,10 +145,10 @@ jobs:
 
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.14"
+          python-version: "3.12"
 
       - name: Set up chart-testing
-        uses: helm/chart-testing-action@v2.7.0
+        uses: helm/chart-testing-action@v2.8.0
 
       - name: Create kind cluster
         uses: helm/kind-action@v1.14.0
@@ -148,8 +173,23 @@ jobs:
             --wait \
             --timeout 5m
 
+      - name: Install cert-manager
+        run: |
+          helm repo add jetstack https://charts.jetstack.io
+          helm repo update
+          # renovate: datasource=helm depName=cert-manager registryUrl=https://charts.jetstack.io
+          helm install cert-manager jetstack/cert-manager \
+            --namespace cert-manager \
+            --create-namespace \
+            --version v1.17.2 \
+            --set crds.enabled=true \
+            --wait \
+            --timeout 5m
+
       - name: Install RabbitMQ Cluster Operator
         run: |
+          set -euo pipefail
+          if [ "${RUNNER_DEBUG:-0}" = "1" ]; then set -x; fi
           # renovate: datasource=github-releases depName=rabbitmq/cluster-operator
           kubectl apply -f https://github.com/rabbitmq/cluster-operator/releases/download/v2.22.1/cluster-operator.yml
           kubectl -n rabbitmq-system wait --for=condition=ready pod -l app.kubernetes.io/name=rabbitmq-cluster-operator --timeout=300s
