@@ -2,11 +2,13 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:recommended",
-    "github>whitesource/merge-confidence:beta"
+    "mergeConfidence:all-badges"
   ],
   "addLabels": ["renovate"],
   "assignees": ["mzglinski"],
-  "allowedPostUpgradeCommands": ["^make docs$"],
+  "allowedCommands": [
+    "^make docs$"
+  ],
   "configMigration": true,
   "lockFileMaintenance": {
     "enabled": false
