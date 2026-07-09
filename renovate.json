@@ -14,8 +14,6 @@
   "minimumReleaseAgeBehaviour": "timestamp-optional",
   "semanticCommits": "enabled",
   "platformAutomerge": true,
-  "prHourlyLimit": 1,
-  "commitHourlyLimit": 1,
   "rebaseWhen": "behind-base-branch",
   "customManagers": [
     {
