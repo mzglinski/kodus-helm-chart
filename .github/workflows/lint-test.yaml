@@ -82,7 +82,7 @@ jobs:
           changed_files="$(git diff --name-only ${compare_range})"
           echo "${changed_files}"
 
-          if echo "${changed_files}" | grep -qE '^(\\.github/workflows/lint-test\\.yaml|Makefile|ct\\.yaml|chart/ci/)'; then
+          if echo "${changed_files}" | grep -qE '^(\.github/workflows/lint-test\.yaml|Makefile|ct\.yaml|chart/ci/)'; then
             echo "CI workflow or fixture changes detected"
             run_ci=true
           fi
