@@ -1,0 +1,45 @@
+{{- if .Values.workerAnalytics.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kodus.fullname" . }}-worker-analytics
+  labels:
+    {{- include "kodus.labels" . | nindent 4 }}
+    app.kubernetes.io/component: worker-analytics
+spec:
+  replicas: {{ .Values.workerAnalytics.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "kodus.componentSelectorLabels" (dict "root" . "component" "worker-analytics") | nindent 6 }}
+  template:
+    metadata:
+      {{- include "kodus.deploymentPodMetadata" (dict "root" . "component" "worker-analytics") | nindent 6 }}
+    spec:
+      {{- include "kodus.deploymentPodSpec" (dict "root" . "component" "worker-analytics") | nindent 6 }}
+      {{- $extraVolumes := include "kodus.extraVolumes" (dict "root" . "component" "worker-analytics") -}}
+      {{- if $extraVolumes }}
+      volumes:
+        {{- $extraVolumes | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: worker-analytics
+          image: {{ include "kodus.image" (dict "root" . "component" "worker") }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["node", "dist/apps/worker/main.js"]
+          env:
+            {{- include "kodus.workerAnalyticsEnv" . | nindent 12 }}
+            {{- include "kodus.extraEnv" (dict "root" . "component" "worker-analytics") | nindent 12 }}
+          {{- $containerSecurityContext := include "kodus.containerSecurityContext" (dict "root" . "component" "worker-analytics") -}}
+          {{- if $containerSecurityContext }}
+          securityContext:
+            {{- $containerSecurityContext | nindent 12 }}
+          {{- end }}
+          {{- $extraVolumeMounts := include "kodus.extraVolumeMounts" (dict "root" . "component" "worker-analytics") -}}
+          {{- if $extraVolumeMounts }}
+          volumeMounts:
+            {{- $extraVolumeMounts | nindent 12 }}
+          {{- end }}
+          resources:
+            {{- toYaml .Values.workerAnalytics.resources | nindent 12 }}
+          {{- include "kodus.workerProbes" . | nindent 10 }}
+{{- end }}

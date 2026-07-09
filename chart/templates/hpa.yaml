@@ -1,0 +1,7 @@
+{{- range $component := list "api" "worker" "webhooks" "web" }}
+{{- $values := index $.Values $component }}
+{{- if and $values.enabled $values.autoscaling.enabled }}
+---
+{{ include "kodus.hpa" (dict "root" $ "component" $component "values" $values) }}
+{{- end }}
+{{- end }}

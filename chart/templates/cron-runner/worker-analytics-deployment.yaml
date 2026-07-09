@@ -1,0 +1,34 @@
+{{- if and .Values.cronRunner.enabled .Values.cronRunner.workerAnalytics.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kodus.fullname" . }}-cron-worker-analytics
+  labels:
+    {{- include "kodus.labels" . | nindent 4 }}
+    app.kubernetes.io/component: cron-worker-analytics
+spec:
+  replicas: {{ .Values.cronRunner.workerAnalytics.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "kodus.componentSelectorLabels" (dict "root" . "component" "cron-worker-analytics") | nindent 6 }}
+  template:
+    metadata:
+      {{- include "kodus.deploymentPodMetadata" (dict "root" . "component" "cron-worker-analytics") | nindent 6 }}
+    spec:
+      {{- include "kodus.deploymentPodSpec" (dict "root" . "component" "cron-worker-analytics") | nindent 6 }}
+      containers:
+        - name: cron-worker-analytics
+          image: {{ include "kodus.image" (dict "root" . "component" "worker") }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["node", "dist/apps/worker/main.js"]
+          env:
+            {{- include "kodus.cronRunnerWorkerAnalyticsEnv" . | nindent 12 }}
+          {{- $containerSecurityContext := include "kodus.containerSecurityContext" (dict "root" . "component" "cron-worker-analytics") -}}
+          {{- if $containerSecurityContext }}
+          securityContext:
+            {{- $containerSecurityContext | nindent 12 }}
+          {{- end }}
+          resources:
+            {{- toYaml .Values.cronRunner.workerAnalytics.resources | nindent 12 }}
+          {{- include "kodus.workerProbes" . | nindent 10 }}
+{{- end }}

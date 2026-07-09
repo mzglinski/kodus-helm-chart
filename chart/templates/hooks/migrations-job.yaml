@@ -1,0 +1,49 @@
+{{- if .Values.jobs.migrations.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "kodus.fullname" . }}-migrations-{{ .Release.Revision }}
+  labels:
+    {{- include "kodus.labels" . | nindent 4 }}
+    app.kubernetes.io/component: migrations
+  annotations:
+    helm.sh/hook: pre-install,pre-upgrade
+    helm.sh/hook-weight: "-4"
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+spec:
+  backoffLimit: {{ .Values.jobs.migrations.backoffLimit }}
+  activeDeadlineSeconds: {{ .Values.jobs.migrations.activeDeadlineSeconds }}
+  template:
+    metadata:
+      labels:
+        {{- include "kodus.componentSelectorLabels" (dict "root" . "component" "migrations") | nindent 8 }}
+    spec:
+      restartPolicy: Never
+      {{- include "kodus.hookJobPodSpec" . | nindent 6 }}
+      containers:
+        - name: migrations
+          image: {{ include "kodus.image" (dict "root" . "component" "api") }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["/usr/bin/bash", "-ec"]
+          args:
+            - |
+              set -euo pipefail
+              if [ "${RUNNER_DEBUG:-0}" = "1" ]; then set -x; fi
+              cd /usr/src/app
+              echo "Running OLTP migrations..."
+              npm run migration:run:prod
+              echo "Ensuring analytics schema..."
+              npm run analytics:ensure-schema:prod
+              echo "Running analytics warehouse migrations..."
+              npm run analytics:migration:run:prod
+              echo "Migrations complete."
+          env:
+            {{- include "kodus.jobEnv" . | nindent 12 }}
+          {{- $containerSecurityContext := include "kodus.containerSecurityContext" (dict "root" . "component" "hooks") -}}
+          {{- if $containerSecurityContext }}
+          securityContext:
+            {{- $containerSecurityContext | nindent 12 }}
+          {{- end }}
+          resources:
+            {{- toYaml .Values.jobs.migrations.resources | nindent 12 }}
+{{- end }}

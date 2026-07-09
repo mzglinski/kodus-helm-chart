@@ -1,0 +1,4 @@
+{{- include "kodus.validateExternalDeps" . -}}
+{{- include "kodus.validateAnalyticsUriMode" . -}}
+{{- include "kodus.validateCronRunner" . -}}
+{{- include "kodus.validateAutoscaling" . -}}
