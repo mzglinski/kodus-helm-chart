@@ -63,7 +63,7 @@ spec:
   imageName: ghcr.io/cloudnative-pg/postgresql:18.4-system-trixie
   postgresql:
     extensions:
-      - name: vector
+      - name: pgvector
         image:
           reference: ghcr.io/cloudnative-pg/pgvector:0.8.2-18-trixie
   bootstrap:
@@ -72,8 +72,6 @@ spec:
       owner: kodus
       secret:
         name: postgres-auth-secret
-      postInitApplicationSQL:
-        - CREATE EXTENSION IF NOT EXISTS vector;
   storage:
     size: 1Gi
   affinity:
@@ -90,6 +88,18 @@ spec:
   type: rw
   pgbouncer:
     poolMode: transaction
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+  name: kodus-db
+spec:
+  name: kodus_db
+  owner: kodus
+  cluster:
+    name: postgres
+  extensions:
+    - name: vector
 ---
 # CI-only MongoDB (the community operator is unreliable on kind runners).
 apiVersion: apps/v1

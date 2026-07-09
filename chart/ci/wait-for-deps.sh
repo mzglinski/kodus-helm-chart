@@ -21,11 +21,8 @@ wait_for_ready_pods() {
   return 1
 }
 
-wait_for_ready_pods "cnpg.io/cluster=postgres" 600
-
-postgres_pod="$(kubectl -n "$namespace" get pods -l cnpg.io/cluster=postgres,cnpg.io/instanceRole=primary -o jsonpath='{.items[0].metadata.name}')"
-kubectl -n "$namespace" exec "${postgres_pod}" -c postgres -- psql -U postgres -d kodus_db -c "CREATE EXTENSION IF NOT EXISTS vector;"
-
+kubectl -n "$namespace" wait --for=condition=Ready cluster/postgres --timeout=600s
+kubectl -n "$namespace" wait --for=jsonpath='{.status.applied}'=true database/kodus-db --timeout=300s
 wait_for_ready_pods "cnpg.io/poolerName=postgres-pooler-rw" 300 || true
 wait_for_ready_pods "app=mongodb-svc" 300
 kubectl -n "$namespace" wait --for=condition=ClusterAvailable rabbitmqcluster/rabbitmq --timeout=600s
