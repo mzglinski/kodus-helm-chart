@@ -63,7 +63,7 @@ spec:
   imageName: ghcr.io/cloudnative-pg/postgresql:18.4-system-trixie
   postgresql:
     extensions:
-      - name: vector
+      - name: pgvector
         image:
           reference: ghcr.io/cloudnative-pg/pgvector:0.8.2-18-trixie
   bootstrap:
@@ -88,6 +88,55 @@ spec:
   type: rw
   pgbouncer:
     poolMode: transaction
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+  name: kodus-db
+spec:
+  name: kodus_db
+  owner: kodus
+  cluster:
+    name: postgres
+  extensions:
+    - name: vector
+---
+# MongoDB Community Operator workload identity (matches kodus-deployment operators).
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: mongodb-kubernetes-appdb
+  labels:
+    app.kubernetes.io/name: mongodb
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: mongodb-kubernetes-appdb
+  labels:
+    app.kubernetes.io/name: mongodb
+rules:
+  - apiGroups: [""]
+    resources: [secrets]
+    verbs: [get]
+  - apiGroups: [""]
+    resources: [pods]
+    verbs: [patch, delete, get]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: mongodb-kubernetes-appdb
+  labels:
+    app.kubernetes.io/name: mongodb
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: mongodb-kubernetes-appdb
+subjects:
+  - kind: ServiceAccount
+    name: mongodb-kubernetes-appdb
+    namespace: default
 ---
 apiVersion: mongodbcommunity.mongodb.com/v1
 kind: MongoDBCommunity
@@ -122,11 +171,31 @@ spec:
             resources:
               requests:
                 storage: 1Gi
+      template:
+        spec:
+          serviceAccountName: mongodb-kubernetes-appdb
+          containers:
+            - name: mongod
+              resources:
+                requests:
+                  cpu: 250m
+                  memory: 512Mi
+                limits:
+                  memory: 1Gi
+            - name: mongodb-agent
+              resources:
+                requests:
+                  cpu: 100m
+                  memory: 128Mi
+                limits:
+                  memory: 512Mi
 ---
 apiVersion: rabbitmq.com/v1beta1
 kind: RabbitmqCluster
 metadata:
   name: rabbitmq
+  labels:
+    app.kubernetes.io/name: rabbitmq
 spec:
   replicas: 1
   image: rabbitmq:4.2.2-management
@@ -136,26 +205,33 @@ spec:
   secretBackend:
     externalSecret:
       name: rabbitmq-credentials
----
-apiVersion: rabbitmq.com/v1beta1
-kind: Vhost
-metadata:
-  name: kodus-ai
-spec:
-  name: kodus-ai
-  rabbitmqClusterReference:
-    name: rabbitmq
----
-apiVersion: rabbitmq.com/v1beta1
-kind: Permission
-metadata:
-  name: kodus-kodus-ai
-spec:
-  vhost: kodus-ai
-  user: kodus
-  permissions:
-    configure: .*
-    write: .*
-    read: .*
-  rabbitmqClusterReference:
-    name: rabbitmq
+  override:
+    statefulSet:
+      spec:
+        template:
+          spec:
+            initContainers:
+              - name: download-delayed-plugin
+                image: curlimages/curl:8.12.1
+                command:
+                  - sh
+                  - -c
+                  - |
+                    set -euo pipefail
+                    curl -fsSL -o /plugins/rabbitmq_delayed_message_exchange.ez \
+                      "https://github.com/rabbitmq/rabbitmq-delayed-message-exchange/releases/download/v4.2.0/rabbitmq_delayed_message_exchange-4.2.0.ez"
+                    echo "f168b2c09810cde3726961d31f38e3408e6a7fbff3929908d6f962061d8e70a1  /plugins/rabbitmq_delayed_message_exchange.ez" | sha256sum -c -
+                volumeMounts:
+                  - name: community-plugins
+                    mountPath: /plugins
+            containers:
+              - name: rabbitmq
+                env:
+                  - name: RABBITMQ_PLUGINS_DIR
+                    value: /opt/rabbitmq/plugins:/community-plugins
+                volumeMounts:
+                  - name: community-plugins
+                    mountPath: /community-plugins
+            volumes:
+              - name: community-plugins
+                emptyDir: {}

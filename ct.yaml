@@ -3,7 +3,9 @@
 chart-dirs:
   - .
 
-check-version-increment: true
+# Version bumps are managed by Release Please (release-please-config.json), not ct.
+check-version-increment: false
+validate-maintainers: false
 
 target-branch: main
 

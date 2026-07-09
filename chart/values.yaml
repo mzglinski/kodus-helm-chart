@@ -130,7 +130,7 @@ config:
       gitlab: https://docs.kodus.io/how_to_use/en/code_review/general_config/gitlab_pat
       bitbucket: https://docs.kodus.io/how_to_use/en/code_review/general_config/bitbucket_pat
       azureRepos: https://docs.kodus.io/how_to_use/en/code_review/general_config/azure_devops_pat
-      forgejo: ""
+      forgejo: https://docs.kodus.io/how_to_use/en/code_review/general_config/forgejo_pat
 
 llm:
   # Concrete model ID for self-hosted env-mode LLM (e.g. gpt-4o, claude-sonnet-4-6, gemini-2.5-pro, kimi-k2.6).
@@ -193,7 +193,7 @@ api:
   replicaCount: 1
   autoscaling:
     enabled: false
-    minReplicas: # defaults to replicaCount when autoscaling is enabled
+    minReplicas:  # defaults to replicaCount when autoscaling is enabled
     maxReplicas: 10
     # targetCPUUtilizationPercentage: 80
     # targetMemoryUtilizationPercentage: 80
@@ -219,7 +219,7 @@ worker:
   terminationGracePeriodSeconds: 660
   autoscaling:
     enabled: false
-    minReplicas: # defaults to replicaCount when autoscaling is enabled
+    minReplicas:  # defaults to replicaCount when autoscaling is enabled
     maxReplicas: 10
     # targetCPUUtilizationPercentage: 80
     # targetMemoryUtilizationPercentage: 80
@@ -241,7 +241,7 @@ webhooks:
   replicaCount: 1
   autoscaling:
     enabled: false
-    minReplicas: # defaults to replicaCount when autoscaling is enabled
+    minReplicas:  # defaults to replicaCount when autoscaling is enabled
     maxReplicas: 10
     # targetCPUUtilizationPercentage: 80
     # targetMemoryUtilizationPercentage: 80
@@ -263,7 +263,7 @@ web:
   replicaCount: 1
   autoscaling:
     enabled: false
-    minReplicas: # defaults to replicaCount when autoscaling is enabled
+    minReplicas:  # defaults to replicaCount when autoscaling is enabled
     maxReplicas: 10
     # targetCPUUtilizationPercentage: 80
     # targetMemoryUtilizationPercentage: 80

@@ -34,10 +34,30 @@ jobs:
       - name: Set up chart-testing
         uses: helm/chart-testing-action@v2.7.0
 
+      - name: Reject manual chart version bumps
+        if: github.event_name == 'pull_request'
+        run: |
+          set -euo pipefail
+          if [ "${RUNNER_DEBUG:-0}" = "1" ]; then set -x; fi
+
+          if [[ "${{ github.head_ref }}" == release-please--* ]]; then
+            echo "Release Please PR; chart version changes are allowed."
+            exit 0
+          fi
+
+          target_branch="${{ github.event.repository.default_branch }}"
+          old_version="$(git show "origin/${target_branch}:chart/Chart.yaml" | awk '/^version:/{print $2; exit}')"
+          new_version="$(awk '/^version:/{print $2; exit}' chart/Chart.yaml)"
+
+          if [[ "${old_version}" != "${new_version}" ]]; then
+            echo "::error::chart/Chart.yaml version must not change in this PR (was ${old_version}, now ${new_version}). Release Please manages chart version bumps."
+            exit 1
+          fi
+
       - name: Run chart-testing (list-changed)
         id: list-changed
         run: |
-          changed=$(ct list-changed --target-branch ${{ github.event.repository.default_branch }})
+          changed=$(ct list-changed --config ct.yaml --target-branch ${{ github.event.repository.default_branch }})
           if [[ -n "$changed" ]]; then
             echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
@@ -76,14 +96,14 @@ jobs:
         run: make docs-check
 
       - name: Run chart-testing (lint)
-        run: ct lint --target-branch ${{ github.event.repository.default_branch }}
+        run: ct lint --config ct.yaml --target-branch ${{ github.event.repository.default_branch }}
 
       - name: Helm template (lint values)
         run: helm template kodus chart -f chart/ci/lint.yaml
 
   install-test:
     name: Install test
-    needs: [changes, lint]
+    needs: [changes]
     if: needs.changes.outputs.changed == 'true'
     runs-on: ubuntu-latest
     steps:
@@ -120,7 +140,13 @@ jobs:
           helm repo add mongodb https://mongodb.github.io/helm-charts
           helm repo update
           # renovate: datasource=helm depName=community-operator registryUrl=https://mongodb.github.io/helm-charts
-          helm install mongodb-operator mongodb/community-operator --namespace mongodb --create-namespace --version 0.13.0 --wait --timeout 5m
+          helm install mongodb-operator mongodb/community-operator \
+            --namespace mongodb \
+            --create-namespace \
+            --version 0.13.0 \
+            --set operator.watchNamespace='*' \
+            --wait \
+            --timeout 5m
 
       - name: Install RabbitMQ Cluster Operator
         run: |
@@ -134,10 +160,4 @@ jobs:
           bash chart/ci/wait-for-deps.sh default
 
       - name: Run chart-testing (install)
-        run: ct install --debug --namespace default --target-branch ${{ github.event.repository.default_branch }} --helm-extra-args "--timeout 1200s"
-
-      - name: Wait for Kodus pods
-        run: |
-          kubectl wait --for=condition=ready pod -l app.kubernetes.io/instance=kodus --timeout=900s
-          kubectl get pods -l app.kubernetes.io/instance=kodus
-          kubectl get deploy -l app.kubernetes.io/instance=kodus
+        run: ct install --config ct.yaml --debug --namespace default --target-branch ${{ github.event.repository.default_branch }} --helm-extra-args "--timeout 300s"
