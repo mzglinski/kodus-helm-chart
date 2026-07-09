@@ -16,29 +16,24 @@ jobs:
         with:
           path: main
 
-      - uses: actions/checkout@v4
-        with:
-          ref: gh-pages
-          path: gh-pages
-        continue-on-error: true
-
-      - name: Init gh-pages branch
+      - name: Prepare gh-pages worktree
         run: |
-          if [ ! -d gh-pages/.git ]; then
-            rm -rf gh-pages
-            mkdir gh-pages
-            cd gh-pages
-            git init
-            git checkout -b gh-pages
-            git remote add origin "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
-            git config user.email "action@github.com"
-            git config user.name "GitHub Action"
-            mkdir -p charts
+          set -euo pipefail
+          if [ "${RUNNER_DEBUG:-0}" = "1" ]; then set -x; fi
+
+          repo_url="https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
+          rm -rf gh-pages
+
+          if git ls-remote --heads "$repo_url" gh-pages | grep -q .; then
+            git clone --depth=1 --branch gh-pages "$repo_url" gh-pages
           else
-            cd gh-pages
-            git config user.email "action@github.com"
-            git config user.name "GitHub Action"
+            mkdir -p gh-pages/charts
+            git -C gh-pages init -b gh-pages
+            git -C gh-pages remote add origin "$repo_url"
           fi
+
+          git -C gh-pages config user.email "action@github.com"
+          git -C gh-pages config user.name "GitHub Action"
 
       - name: Set up Helm
         uses: azure/setup-helm@v4
@@ -56,13 +51,15 @@ jobs:
       - name: Commit and push gh-pages
         working-directory: gh-pages
         run: |
+          set -euo pipefail
+          if [ "${RUNNER_DEBUG:-0}" = "1" ]; then set -x; fi
+
           git add .
-          git config user.email "action@github.com"
-          git config user.name "GitHub Action"
           git diff --staged --quiet || git commit -m "Publish chart ${GITHUB_REF_NAME}"
-          git push -f origin gh-pages
+          git push -f origin HEAD:gh-pages
 
       - name: Upload release artifact
+        if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
           files: gh-pages/charts/kodus-*.tgz
