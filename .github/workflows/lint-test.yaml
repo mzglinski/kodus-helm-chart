@@ -103,7 +103,7 @@ jobs:
 
   install-test:
     name: Install test
-    needs: [changes, lint]
+    needs: [changes]
     if: needs.changes.outputs.changed == 'true'
     runs-on: ubuntu-latest
     steps:
