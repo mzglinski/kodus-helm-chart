@@ -37,7 +37,7 @@ See [chart/README.md](chart/README.md) for prerequisites (PostgreSQL, MongoDB, R
 ## Versioning
 
 - **Chart version** (`version` in `Chart.yaml`) is managed by [Release Please](https://github.com/googleapis/release-please) on merge to the default branch; releases are tagged `vX.Y.Z`.
-- **Application version** (`appVersion` in `Chart.yaml`) is updated by [Renovate](https://github.com/renovatebot/renovate) from [kodustech/kodus-ai](https://github.com/kodustech/kodus-ai) releases. `image.tag` defaults to `appVersion` when unset.
+- **Application version** (`appVersion` in `Chart.yaml`) tracks [kodustech/kodus-ai](https://github.com/kodustech/kodus-ai) **self-hosted** releases (`selfhosted-X.Y.Z` tags; container images are published as `X.Y.Z`). [Renovate](https://github.com/renovatebot/renovate) ignores cloud-only releases. `image.tag` defaults to `appVersion` when unset.
 
 ## CI fixtures
 
