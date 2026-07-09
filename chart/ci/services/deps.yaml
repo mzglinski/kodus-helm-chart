@@ -72,6 +72,8 @@ spec:
       owner: kodus
       secret:
         name: postgres-auth-secret
+      postInitApplicationSQL:
+        - CREATE EXTENSION IF NOT EXISTS vector;
   storage:
     size: 1Gi
   affinity:
