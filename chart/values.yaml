@@ -7,8 +7,9 @@ fullnameOverride: ""
 
 image:
   registry: ghcr.io/kodustech
-  # renovate: datasource=github-releases depName=kodustech/kodus-ai
-  tag: "2.1.24"
+  # -- Container image tag for all Kodus components.
+  # @default -- .Chart.AppVersion
+  tag: ""
   pullPolicy: IfNotPresent
 
 imagePullSecrets: []

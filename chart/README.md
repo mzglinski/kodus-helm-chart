@@ -196,7 +196,7 @@ API ingress paths are gated on `api.enabled` and `webhooks.enabled` so disabled 
 | global.terminationGracePeriodSeconds | int | `30` |  |
 | image.pullPolicy | string | `"IfNotPresent"` |  |
 | image.registry | string | `"ghcr.io/kodustech"` |  |
-| image.tag | string | `"2.1.24"` |  |
+| image.tag | string | .Chart.AppVersion | Container image tag for all Kodus components. |
 | imagePullSecrets | list | `[]` |  |
 | ingress.annotations."nginx.ingress.kubernetes.io/large-client-header-buffers" | string | `"4 32k"` |  |
 | ingress.annotations."nginx.ingress.kubernetes.io/proxy-buffer-size" | string | `"128k"` |  |
