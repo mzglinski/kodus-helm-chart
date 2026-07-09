@@ -1,0 +1,45 @@
+{{- if .Values.jobs.seeds.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "kodus.fullname" . }}-seeds-{{ .Release.Revision }}
+  labels:
+    {{- include "kodus.labels" . | nindent 4 }}
+    app.kubernetes.io/component: seeds
+  annotations:
+    helm.sh/hook: pre-install,pre-upgrade
+    helm.sh/hook-weight: "-3"
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+spec:
+  backoffLimit: {{ .Values.jobs.seeds.backoffLimit }}
+  activeDeadlineSeconds: {{ .Values.jobs.seeds.activeDeadlineSeconds }}
+  template:
+    metadata:
+      labels:
+        {{- include "kodus.componentSelectorLabels" (dict "root" . "component" "seeds") | nindent 8 }}
+    spec:
+      restartPolicy: Never
+      {{- include "kodus.hookJobPodSpec" . | nindent 6 }}
+      containers:
+        - name: seeds
+          image: {{ include "kodus.image" (dict "root" . "component" "api") }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["/usr/bin/bash", "-ec"]
+          args:
+            - |
+              set -euo pipefail
+              if [ "${RUNNER_DEBUG:-0}" = "1" ]; then set -x; fi
+              cd /usr/src/app
+              echo "Running database seeds..."
+              npm run seed:prod
+              echo "Seeds complete."
+          env:
+            {{- include "kodus.jobEnv" . | nindent 12 }}
+          {{- $containerSecurityContext := include "kodus.containerSecurityContext" (dict "root" . "component" "hooks") -}}
+          {{- if $containerSecurityContext }}
+          securityContext:
+            {{- $containerSecurityContext | nindent 12 }}
+          {{- end }}
+          resources:
+            {{- toYaml .Values.jobs.seeds.resources | nindent 12 }}
+{{- end }}

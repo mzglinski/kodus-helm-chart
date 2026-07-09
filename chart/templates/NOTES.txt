@@ -1,0 +1,24 @@
+Kodus has been installed.
+
+Release: {{ .Release.Name }}
+Namespace: {{ .Release.Namespace }}
+
+{{- if .Values.ingress.enabled }}
+
+Web UI: {{ include "kodus.publicWebUrl" . }}
+API: {{ include "kodus.publicApiUrl" . }}
+
+{{- else }}
+
+Configure ingress or set publicUrls.api / publicUrls.web.
+
+{{- end }}
+
+External dependencies (not managed by this chart):
+  PostgreSQL: {{ .Values.externalPostgresql.host | default .Values.externalPostgresql.uri }}
+  MongoDB: {{ .Values.externalMongodb.host | default .Values.externalMongodb.uri }}
+  RabbitMQ: {{ .Values.externalRabbitmq.host | default "see API_RABBITMQ_URI" }}
+
+See README for stateful service provisioning options.
+
+DISCLAIMER: Community chart — not officially supported by Kodus Tech. See DISCLAIMER.md.

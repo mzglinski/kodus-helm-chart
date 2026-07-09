@@ -1,0 +1,51 @@
+{{- if .Values.web.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kodus.fullname" . }}-web
+  labels:
+    {{- include "kodus.labels" . | nindent 4 }}
+    app.kubernetes.io/component: web
+spec:
+  {{- if not .Values.web.autoscaling.enabled }}
+  replicas: {{ .Values.web.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "kodus.componentSelectorLabels" (dict "root" . "component" "web") | nindent 6 }}
+  template:
+    metadata:
+      {{- include "kodus.deploymentPodMetadata" (dict "root" . "component" "web") | nindent 6 }}
+    spec:
+      {{- include "kodus.deploymentPodSpec" (dict "root" . "component" "web") | nindent 6 }}
+      containers:
+        - name: web
+          image: {{ include "kodus.image" (dict "root" . "component" "web") }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.web.port }}
+              protocol: TCP
+          env:
+            {{- include "kodus.webEnv" . | nindent 12 }}
+            {{- include "kodus.extraEnv" (dict "root" . "component" "web") | nindent 12 }}
+          {{- $containerSecurityContext := include "kodus.containerSecurityContext" (dict "root" . "component" "web") -}}
+          {{- if $containerSecurityContext }}
+          securityContext:
+            {{- $containerSecurityContext | nindent 12 }}
+          {{- end }}
+          resources:
+            {{- toYaml .Values.web.resources | nindent 12 }}
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 10
+{{- end }}

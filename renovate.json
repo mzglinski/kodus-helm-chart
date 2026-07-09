@@ -1,0 +1,92 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    "github>whitesource/merge-confidence:beta"
+  ],
+  "addLabels": ["renovate"],
+  "assignees": ["mzglinski"],
+  "allowedPostUpgradeCommands": ["^make docs$"],
+  "configMigration": true,
+  "lockFileMaintenance": {
+    "enabled": false
+  },
+  "minimumReleaseAge": "3 days",
+  "minimumReleaseAgeBehaviour": "timestamp-optional",
+  "semanticCommits": "enabled",
+  "platformAutomerge": true,
+  "prHourlyLimit": 1,
+  "commitHourlyLimit": 1,
+  "rebaseWhen": "behind-base-branch",
+  "customManagers": [
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["chart/Chart.yaml", "chart/values.yaml"],
+      "matchStrings": [
+        "#\\s*renovate:\\s*datasource=(?<datasource>\\S+)\\s+depName=(?<depName>\\S+)(?:\\s+versioning=(?<versioning>\\S+))?\\s+\\w+\\s*:\\s*[\"']?(?<currentValue>[^\"'\\s]+)[\"']?"
+      ],
+      "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/^\\.github\\/.*\\.ya?ml$/"],
+      "matchStrings": [
+        "#\\s*renovate:\\s*datasource=(?<datasource>\\S+)\\s+depName=(?<depName>\\S+)(?:\\s+versioning=(?<versioning>\\S+))?\\s*\\n\\s*\\w[-\\w]*\\s*:\\s*[\"']?v?(?<currentValue>[^\"'\\s]+)[\"']?"
+      ],
+      "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["Makefile"],
+      "matchStrings": [
+        "#\\s*renovate:\\s*datasource=(?<datasource>\\S+)\\s+depName=(?<depName>\\S+)(?:\\s+versioning=(?<versioning>\\S+))?\\s+\\w[-\\w]*\\s*\\?=\\s*(?<currentValue>\\S+)"
+      ],
+      "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/^\\.github\\/.*\\.ya?ml$/"],
+      "matchStrings": [
+        "#\\s*renovate:\\s*datasource=(?<datasource>\\S+)\\s+depName=(?<depName>\\S+)(?:\\s+registryUrl=(?<registryUrl>\\S+))?\\s*\\n.*--version\\s+(?<currentValue>\\S+)"
+      ],
+      "versioningTemplate": "semver"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/^\\.github\\/.*\\.ya?ml$/"],
+      "matchStrings": [
+        "#\\s*renovate:\\s*datasource=(?<datasource>\\S+)\\s+depName=(?<depName>\\S+)(?:\\s+versioning=(?<versioning>\\S+))?\\s*\\n.*releases/download/v?(?<currentValue>[^/\"'\\s]+)/"
+      ],
+      "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
+    }
+  ],
+  "packageRules": [
+    {
+      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+      "automerge": true
+    },
+    {
+      "matchCurrentVersion": "<1",
+      "matchUpdateTypes": ["minor"],
+      "automerge": false
+    },
+    {
+      "matchDepNames": ["kodustech/kodus-ai"],
+      "groupName": "kodus-ai",
+      "automerge": false,
+      "postUpgradeTasks": {
+        "commands": ["make docs"],
+        "fileFilters": ["chart/README.md"],
+        "executionMode": "branch"
+      }
+    },
+    {
+      "matchDepNames": ["norwoodj/helm-docs"],
+      "groupName": "helm-docs"
+    }
+  ],
+  "ignorePaths": [
+    "**/node_modules/**",
+    "chart/ci/**"
+  ]
+}

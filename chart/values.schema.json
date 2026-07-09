@@ -1,0 +1,151 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "image": {
+      "type": "object",
+      "properties": {
+        "registry": { "type": "string" },
+        "tag": { "type": "string" },
+        "pullPolicy": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "global": {
+      "type": "object",
+      "properties": {
+        "terminationGracePeriodSeconds": { "type": "integer", "minimum": 1 },
+        "extraEnv": { "type": "array" },
+        "extraVolumes": { "type": "array" },
+        "extraVolumeMounts": { "type": "array" }
+      },
+      "additionalProperties": true
+    },
+    "secrets": {
+      "type": "object",
+      "properties": {
+        "existingSecret": { "type": "string" },
+        "keys": {
+          "type": "object",
+          "additionalProperties": { "type": "string" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "externalPostgresql": {
+      "type": "object",
+      "oneOf": [
+        {
+          "required": ["host"],
+          "properties": {
+            "host": { "type": "string", "minLength": 1 }
+          }
+        },
+        {
+          "required": ["uri"],
+          "properties": {
+            "uri": { "type": "string", "minLength": 1 }
+          }
+        }
+      ],
+      "properties": {
+        "uri": { "type": "string" },
+        "host": { "type": "string" },
+        "port": { "type": "integer" },
+        "database": { "type": "string" },
+        "username": { "type": "string" },
+        "existingSecret": { "type": "string" },
+        "passwordKey": { "type": "string" }
+      }
+    },
+    "externalMongodb": {
+      "type": "object",
+      "oneOf": [
+        {
+          "required": ["host"],
+          "properties": {
+            "host": { "type": "string", "minLength": 1 }
+          }
+        },
+        {
+          "required": ["uri"],
+          "properties": {
+            "uri": { "type": "string", "minLength": 1 }
+          }
+        }
+      ],
+      "properties": {
+        "uri": { "type": "string" },
+        "host": { "type": "string" },
+        "port": { "type": "integer" },
+        "database": { "type": "string" },
+        "username": { "type": "string" },
+        "authSource": { "type": "string" },
+        "existingSecret": { "type": "string" },
+        "passwordKey": { "type": "string" }
+      }
+    },
+    "externalRabbitmq": {
+      "type": "object",
+      "oneOf": [
+        {
+          "required": ["host"],
+          "properties": {
+            "host": { "type": "string", "minLength": 1 }
+          }
+        },
+        {
+          "required": ["uri"],
+          "properties": {
+            "uri": { "type": "string", "minLength": 1 }
+          }
+        }
+      ],
+      "properties": {
+        "uri": { "type": "string" },
+        "host": { "type": "string" },
+        "port": { "type": "integer" },
+        "vhost": { "type": "string" },
+        "username": { "type": "string" },
+        "password": { "type": "string" },
+        "existingSecret": { "type": "string" },
+        "usernameKey": { "type": "string" },
+        "passwordKey": { "type": "string" }
+      }
+    },
+    "worker": {
+      "type": "object",
+      "properties": {
+        "healthPort": { "type": "integer", "minimum": 1 },
+        "terminationGracePeriodSeconds": { "type": "integer", "minimum": 1 }
+      },
+      "additionalProperties": true
+    },
+    "web": {
+      "type": "object",
+      "properties": {
+        "mcpManagerHostname": { "type": "string" },
+        "apiHostname": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "ingress": {
+      "type": "object",
+      "properties": {
+        "api": {
+          "type": "object",
+          "properties": {
+            "tls": { "type": "boolean" }
+          }
+        },
+        "web": {
+          "type": "object",
+          "properties": {
+            "tls": { "type": "boolean" }
+          }
+        }
+      },
+      "additionalProperties": true
+    }
+  }
+}

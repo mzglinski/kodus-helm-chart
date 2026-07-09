@@ -1,0 +1,161 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: postgres-auth-secret
+type: Opaque
+stringData:
+  username: kodus
+  password: ci-postgres-password
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mongodb-auth-secret
+type: Opaque
+stringData:
+  password: ci-mongo-password
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: kodus-db-credentials
+type: Opaque
+stringData:
+  password: ci-postgres-password
+  mongo-password: ci-mongo-password
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: rabbitmq-credentials
+type: Opaque
+stringData:
+  username: kodus
+  password: ci-rabbitmq-password
+  default_user.conf: |
+    default_user = kodus
+    default_pass = ci-rabbitmq-password
+  host: rabbitmq
+  port: "5672"
+  provider: rabbitmq
+  type: rabbitmq
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: kodus-app-secrets
+type: Opaque
+stringData:
+  jwt-secret: Y2ktdGVzdC1qd3Qtc2VjcmV0LXRoaXJ0eS1jaGFycy1sb25n
+  jwt-refresh-secret: Y2ktdGVzdC1qd3QtcmVmcmVzaC1zZWNyZXQtY2hhcnMtbG9uZw==
+  crypto-key: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+  code-management-secret: bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+  code-management-webhook-token: ci-webhook-token
+  nextauth-secret: Y2ktdGVzdC1uZXh0YXV0aC1zZWNyZXQtY2hhcnMtbG9uZw==
+  rabbitmq-uri: amqp://kodus:ci-rabbitmq-password@rabbitmq:5672/kodus-ai?heartbeat=60&frameMax=8192
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: postgres
+spec:
+  instances: 1
+  imageName: ghcr.io/cloudnative-pg/postgresql:18.4-system-trixie
+  postgresql:
+    extensions:
+      - name: vector
+        image:
+          reference: ghcr.io/cloudnative-pg/pgvector:0.8.2-18-trixie
+  bootstrap:
+    initdb:
+      database: kodus_db
+      owner: kodus
+      secret:
+        name: postgres-auth-secret
+  storage:
+    size: 1Gi
+  affinity:
+    enablePodAntiAffinity: false
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Pooler
+metadata:
+  name: postgres-pooler-rw
+spec:
+  cluster:
+    name: postgres
+  instances: 1
+  type: rw
+  pgbouncer:
+    poolMode: transaction
+---
+apiVersion: mongodbcommunity.mongodb.com/v1
+kind: MongoDBCommunity
+metadata:
+  name: mongodb
+spec:
+  members: 1
+  type: ReplicaSet
+  version: "8.0.12"
+  security:
+    authentication:
+      modes: ["SCRAM"]
+  users:
+    - name: kodus
+      db: admin
+      passwordSecretRef:
+        name: mongodb-auth-secret
+        key: password
+      roles:
+        - name: readWrite
+          db: kodus
+        - name: dbAdmin
+          db: kodus
+      scramCredentialsSecretName: mongodb-kodus-scram
+  statefulSet:
+    spec:
+      volumeClaimTemplates:
+        - metadata:
+            name: data-volume
+          spec:
+            accessModes: ["ReadWriteOnce"]
+            resources:
+              requests:
+                storage: 1Gi
+---
+apiVersion: rabbitmq.com/v1beta1
+kind: RabbitmqCluster
+metadata:
+  name: rabbitmq
+spec:
+  replicas: 1
+  image: rabbitmq:4.2.2-management
+  rabbitmq:
+    additionalPlugins:
+      - rabbitmq_delayed_message_exchange
+  secretBackend:
+    externalSecret:
+      name: rabbitmq-credentials
+---
+apiVersion: rabbitmq.com/v1beta1
+kind: Vhost
+metadata:
+  name: kodus-ai
+spec:
+  name: kodus-ai
+  rabbitmqClusterReference:
+    name: rabbitmq
+---
+apiVersion: rabbitmq.com/v1beta1
+kind: Permission
+metadata:
+  name: kodus-kodus-ai
+spec:
+  vhost: kodus-ai
+  user: kodus
+  permissions:
+    configure: .*
+    write: .*
+    read: .*
+  rabbitmqClusterReference:
+    name: rabbitmq

@@ -1,0 +1,18 @@
+{{- if and .Values.global.mcpServerEnabled .Values.mcpManager.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "kodus.fullname" . }}-mcp-manager
+  labels:
+    {{- include "kodus.labels" . | nindent 4 }}
+    app.kubernetes.io/component: mcp-manager
+spec:
+  type: ClusterIP
+  ports:
+    - port: {{ .Values.mcpManager.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "kodus.componentSelectorLabels" (dict "root" . "component" "mcp-manager") | nindent 4 }}
+{{- end }}
