@@ -3,9 +3,9 @@ entries:
   kodus:
   - apiVersion: v2
     appVersion: 2.1.24
-    created: "2026-07-09T17:40:00.462986104Z"
+    created: "2026-07-09T17:45:26.928024809Z"
     description: Helm chart for self-hosted Kodus AI (stateless components only)
-    digest: c2c2c7377125c5f6e6c7d990acfc8cbd275b4f6b28b320dd0da22320a1127433
+    digest: 71ecf6db8b1f1cc16b32e86c644ccc4699db44e9cbfc012f562bfdce83f40c70
     home: https://kodus.io
     keywords:
     - kodus
@@ -23,4 +23,4 @@ entries:
     urls:
     - https://mzglinski.github.io/kodus-helm-chart/charts/kodus-0.1.0.tgz
     version: 0.1.0
-generated: "2026-07-09T17:40:00.461069332Z"
+generated: "2026-07-09T17:45:26.926067055Z"
