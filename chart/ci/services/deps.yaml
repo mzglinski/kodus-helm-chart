@@ -136,26 +136,3 @@ spec:
   secretBackend:
     externalSecret:
       name: rabbitmq-credentials
----
-apiVersion: rabbitmq.com/v1beta1
-kind: Vhost
-metadata:
-  name: kodus-ai
-spec:
-  name: kodus-ai
-  rabbitmqClusterReference:
-    name: rabbitmq
----
-apiVersion: rabbitmq.com/v1beta1
-kind: Permission
-metadata:
-  name: kodus-kodus-ai
-spec:
-  vhost: kodus-ai
-  user: kodus
-  permissions:
-    configure: .*
-    write: .*
-    read: .*
-  rabbitmqClusterReference:
-    name: rabbitmq

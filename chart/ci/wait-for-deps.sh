@@ -10,4 +10,9 @@ kubectl -n "$namespace" wait --for=condition=ready pod -l app.kubernetes.io/name
 kubectl -n "$namespace" wait --for=jsonpath='{.status.phase}'=Running mongodbcommunity/mongodb --timeout=600s
 kubectl -n "$namespace" wait --for=condition=ClusterAvailable rabbitmqcluster/rabbitmq --timeout=600s
 
+rabbitmq_pod="$(kubectl -n "$namespace" get pods -l app.kubernetes.io/name=rabbitmq -o jsonpath='{.items[0].metadata.name}')"
+kubectl -n "$namespace" wait --for=condition=ready "pod/${rabbitmq_pod}" --timeout=300s
+kubectl -n "$namespace" exec "${rabbitmq_pod}" -- rabbitmqctl add_vhost kodus-ai || true
+kubectl -n "$namespace" exec "${rabbitmq_pod}" -- rabbitmqctl set_permissions -p kodus-ai kodus ".*" ".*" ".*"
+
 echo "All CI dependencies are ready."
