@@ -6,9 +6,6 @@
   ],
   "addLabels": ["renovate"],
   "assignees": ["mzglinski"],
-  "allowedCommands": [
-    "^make docs$"
-  ],
   "configMigration": true,
   "lockFileMaintenance": {
     "enabled": false
@@ -75,12 +72,7 @@
     {
       "matchDepNames": ["kodustech/kodus-ai"],
       "groupName": "kodus-ai",
-      "automerge": false,
-      "postUpgradeTasks": {
-        "commands": ["make docs"],
-        "fileFilters": ["chart/README.md"],
-        "executionMode": "branch"
-      }
+      "automerge": false
     },
     {
       "matchDepNames": ["norwoodj/helm-docs"],
