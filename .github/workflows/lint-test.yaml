@@ -160,4 +160,4 @@ jobs:
           bash chart/ci/wait-for-deps.sh default
 
       - name: Run chart-testing (install)
-        run: ct install --config ct.yaml --debug --namespace default --target-branch ${{ github.event.repository.default_branch }} --helm-extra-args "--timeout 1200s"
+        run: ct install --config ct.yaml --debug --namespace default --target-branch ${{ github.event.repository.default_branch }} --helm-extra-args "--timeout 300s"
