@@ -150,6 +150,8 @@ apiVersion: rabbitmq.com/v1beta1
 kind: RabbitmqCluster
 metadata:
   name: rabbitmq
+  labels:
+    app.kubernetes.io/name: rabbitmq
 spec:
   replicas: 1
   image: rabbitmq:4.2.2-management
@@ -159,3 +161,33 @@ spec:
   secretBackend:
     externalSecret:
       name: rabbitmq-credentials
+  override:
+    statefulSet:
+      spec:
+        template:
+          spec:
+            initContainers:
+              - name: download-delayed-plugin
+                image: curlimages/curl:8.12.1
+                command:
+                  - sh
+                  - -c
+                  - |
+                    set -euo pipefail
+                    curl -fsSL -o /plugins/rabbitmq_delayed_message_exchange.ez \
+                      "https://github.com/rabbitmq/rabbitmq-delayed-message-exchange/releases/download/v4.2.0/rabbitmq_delayed_message_exchange-4.2.0.ez"
+                    echo "f168b2c09810cde3726961d31f38e3408e6a7fbff3929908d6f962061d8e70a1  /plugins/rabbitmq_delayed_message_exchange.ez" | sha256sum -c -
+                volumeMounts:
+                  - name: community-plugins
+                    mountPath: /plugins
+            containers:
+              - name: rabbitmq
+                env:
+                  - name: RABBITMQ_PLUGINS_DIR
+                    value: /opt/rabbitmq/plugins:/community-plugins
+                volumeMounts:
+                  - name: community-plugins
+                    mountPath: /community-plugins
+            volumes:
+              - name: community-plugins
+                emptyDir: {}
