@@ -198,7 +198,7 @@ metadata:
     app.kubernetes.io/name: rabbitmq
 spec:
   replicas: 1
-  image: rabbitmq:4.2.2-management
+  image: rabbitmq:4.2.6-management
   rabbitmq:
     additionalPlugins:
       - rabbitmq_delayed_message_exchange
