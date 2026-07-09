@@ -13,7 +13,6 @@ API: {{ include "kodus.publicApiUrl" . }}
 Configure ingress or set publicUrls.api / publicUrls.web.
 
 {{- end }}
-Test
 
 External dependencies (not managed by this chart):
   PostgreSQL: {{ .Values.externalPostgresql.host | default .Values.externalPostgresql.uri }}
