@@ -77,14 +77,6 @@
     {
       "matchDepNames": ["norwoodj/helm-docs"],
       "groupName": "helm-docs"
-    },
-    {
-      "matchDepNames": ["python"],
-      "enabled": false
-    },
-    {
-      "matchDepNames": ["rabbitmq/cluster-operator"],
-      "automerge": false
     }
   ],
   "ignorePaths": [
