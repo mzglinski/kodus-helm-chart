@@ -148,9 +148,3 @@ jobs:
 
       - name: Run chart-testing (install)
         run: ct install --config ct.yaml --debug --namespace default --target-branch ${{ github.event.repository.default_branch }} --helm-extra-args "--timeout 1200s"
-
-      - name: Wait for Kodus pods
-        run: |
-          kubectl wait --for=condition=ready pod -l app.kubernetes.io/instance=kodus --timeout=900s
-          kubectl get pods -l app.kubernetes.io/instance=kodus
-          kubectl get deploy -l app.kubernetes.io/instance=kodus
