@@ -71,15 +71,19 @@ jobs:
           fi
 
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-            compare_range="origin/${DEFAULT_BRANCH}...HEAD"
+            compare_range="${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }}"
           elif [[ "${{ github.event.before }}" != "0000000000000000000000000000000000000000" ]]; then
             compare_range="${{ github.event.before }}..${{ github.sha }}"
           else
             compare_range="HEAD~1..HEAD"
           fi
 
-          if git diff --name-only ${compare_range} | grep -qE '^(\\.github/workflows/lint-test\\.yaml|Makefile|ct\\.yaml|chart/ci/)'; then
-            echo "CI workflow or fixture changes detected in: ${compare_range}"
+          echo "Comparing: ${compare_range}"
+          changed_files="$(git diff --name-only ${compare_range})"
+          echo "${changed_files}"
+
+          if echo "${changed_files}" | grep -qE '^(\\.github/workflows/lint-test\\.yaml|Makefile|ct\\.yaml|chart/ci/)'; then
+            echo "CI workflow or fixture changes detected"
             run_ci=true
           fi
 
