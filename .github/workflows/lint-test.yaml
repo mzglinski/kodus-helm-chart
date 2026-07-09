@@ -135,13 +135,6 @@ jobs:
           # renovate: datasource=helm depName=cloudnative-pg registryUrl=https://cloudnative-pg.github.io/charts
           helm install cnpg cnpg/cloudnative-pg --namespace cnpg-system --create-namespace --version 0.29.0 --wait --timeout 5m
 
-      - name: Install MongoDB Community Operator
-        run: |
-          helm repo add mongodb https://mongodb.github.io/helm-charts
-          helm repo update
-          # renovate: datasource=helm depName=community-operator registryUrl=https://mongodb.github.io/helm-charts
-          helm install mongodb-operator mongodb/community-operator --namespace mongodb --create-namespace --version 0.13.0 --wait --timeout 5m
-
       - name: Install RabbitMQ Cluster Operator
         run: |
           # renovate: datasource=github-releases depName=rabbitmq/cluster-operator

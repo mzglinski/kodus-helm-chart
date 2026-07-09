@@ -23,7 +23,7 @@ wait_for_ready_pods() {
 
 wait_for_ready_pods "cnpg.io/cluster=postgres" 600
 wait_for_ready_pods "cnpg.io/poolerName=postgres-pooler-rw" 300 || true
-wait_for_ready_pods "app=mongodb-svc" 900
+wait_for_ready_pods "app=mongodb-svc" 300
 kubectl -n "$namespace" wait --for=condition=ClusterAvailable rabbitmqcluster/rabbitmq --timeout=600s
 wait_for_ready_pods "app.kubernetes.io/name=rabbitmq" 600
 
