@@ -140,7 +140,13 @@ jobs:
           helm repo add mongodb https://mongodb.github.io/helm-charts
           helm repo update
           # renovate: datasource=helm depName=community-operator registryUrl=https://mongodb.github.io/helm-charts
-          helm install mongodb-operator mongodb/community-operator --namespace mongodb --create-namespace --version 0.13.0 --wait --timeout 5m
+          helm install mongodb-operator mongodb/community-operator \
+            --namespace mongodb \
+            --create-namespace \
+            --version 0.13.0 \
+            --set operator.watchNamespace='*' \
+            --wait \
+            --timeout 5m
 
       - name: Install RabbitMQ Cluster Operator
         run: |
