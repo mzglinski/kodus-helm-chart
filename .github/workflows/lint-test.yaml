@@ -77,7 +77,7 @@ jobs:
         uses: azure/setup-helm@v4
         with:
           # renovate: datasource=github-releases depName=helm/helm
-          version: v3.16.4
+          version: v3.21.2
 
       - uses: actions/setup-python@v5
         with:
@@ -116,7 +116,7 @@ jobs:
         uses: azure/setup-helm@v4
         with:
           # renovate: datasource=github-releases depName=helm/helm
-          version: v3.16.4
+          version: v3.21.2
 
       - uses: actions/setup-python@v5
         with:
