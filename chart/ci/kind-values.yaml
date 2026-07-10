@@ -30,6 +30,10 @@ ingress:
 
 global:
   logLevel: error
+  mcpServerEnabled: true
+
+mcpManager:
+  mcpProviders: kodusmcp,custom
 
 jobs:
   seeds:
