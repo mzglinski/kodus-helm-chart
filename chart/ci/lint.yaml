@@ -22,3 +22,9 @@ externalRabbitmq:
   vhost: kodus-ai
   username: kodus
   password: ci-placeholder
+
+global:
+  mcpServerEnabled: true
+
+mcpManager:
+  mcpProviders: kodusmcp,custom

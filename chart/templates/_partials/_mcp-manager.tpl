@@ -50,6 +50,7 @@
       name: {{ include "kodus.secretName" . }}
       key: mcp-manager-encryption-secret
 {{ include "kodus.optionalSecretEnv" (dict "root" . "name" "API_MCP_MANAGER_COMPOSIO_API_KEY" "key" .Values.secrets.keys.mcpManagerComposioApiKey) }}
+{{ include "kodus.mcpApiEnv" . }}
 {{- if .Values.externalPostgresql.uri }}
 - name: API_PG_DB_URL
   valueFrom:

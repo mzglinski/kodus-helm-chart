@@ -53,6 +53,8 @@ stringData:
   code-management-webhook-token: ci-webhook-token
   nextauth-secret: Y2ktdGVzdC1uZXh0YXV0aC1zZWNyZXQtY2hhcnMtbG9uZw==
   rabbitmq-uri: amqp://kodus:ci-rabbitmq-password@rabbitmq:5672/kodus-ai?heartbeat=60&frameMax=8192
+  mcp-manager-jwt-secret: Y2ktdGVzdC1tY3AtbWFuYWdlci1qd3Qtc2VjcmV0LWNoYXJzLWxvbmc=
+  mcp-manager-encryption-secret: cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 ---
 apiVersion: postgresql.cnpg.io/v1
 kind: Cluster

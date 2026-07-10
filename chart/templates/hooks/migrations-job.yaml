@@ -36,6 +36,12 @@ spec:
               npm run analytics:ensure-schema:prod
               echo "Running analytics warehouse migrations..."
               npm run analytics:migration:run:prod
+              {{- if .Values.global.mcpServerEnabled }}
+              echo "Ensuring MCP Manager schema..."
+              npm run mcp-manager:ensure-schema:prod
+              echo "Running MCP Manager migrations..."
+              npm run mcp-manager:migration:run:prod
+              {{- end }}
               echo "Migrations complete."
           env:
             {{- include "kodus.jobEnv" . | nindent 12 }}
