@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.1.1](https://github.com/mzglinski/kodus-helm-chart/compare/v0.1.0...v0.1.1) (2026-07-10)
+
+
+### Bug Fixes
+
+* cap RabbitMQ below 4.3 and enable Renovate for chart/ci ([#27](https://github.com/mzglinski/kodus-helm-chart/issues/27)) ([4dd48e9](https://github.com/mzglinski/kodus-helm-chart/commit/4dd48e9525dd7eae5ab4a91270fbce70af2103bd))
+* **chart:** default image.tag to Chart.appVersion for Renovate ([#12](https://github.com/mzglinski/kodus-helm-chart/issues/12)) ([b4032d3](https://github.com/mzglinski/kodus-helm-chart/commit/b4032d3bf98292201d2574768531cce7047f1431))
+* **ci:** always run chart tests and fix operator 2.22 fixtures ([#18](https://github.com/mzglinski/kodus-helm-chart/issues/18)) ([7bd75e0](https://github.com/mzglinski/kodus-helm-chart/commit/7bd75e0f2d7eb84c6d92c46dc869a3449b0d395f))
+* **ci:** wait for RabbitMQ webhook before applying deps ([#25](https://github.com/mzglinski/kodus-helm-chart/issues/25)) ([edd3c21](https://github.com/mzglinski/kodus-helm-chart/commit/edd3c21323adbe5ee6ae6b5321dfc4b482049788))
+* enable MCP Manager in chart hooks, env, and CI ([#30](https://github.com/mzglinski/kodus-helm-chart/issues/30)) ([c154725](https://github.com/mzglinski/kodus-helm-chart/commit/c154725a3f0af1a527b06dd5654aa641dc77c7aa))
+* **renovate:** track kodus-ai self-hosted releases only ([#15](https://github.com/mzglinski/kodus-helm-chart/issues/15)) ([15e16ce](https://github.com/mzglinski/kodus-helm-chart/commit/15e16ce2bcd14b15f03576097d104020a231ba73))
+
 ## [0.1.0](https://github.com/mzglinski/kodus-helm-chart/compare/v0.0.1...v0.1.0) (2026-07-09)
 
 
