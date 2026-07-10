@@ -15,4 +15,4 @@ You are solely responsible for:
 - Managing secrets, TLS certificates, and network access
 - Validating compatibility with your Kodus release and infrastructure
 
-See [LICENSE](LICENSE) for the full GPL-3.0 license text.
+See [LICENSE](LICENSE) for the full MIT license text.

@@ -48,4 +48,4 @@ Chart-testing values and cluster fixtures:
 
 ## License
 
-GPL-3.0 — see [LICENSE](LICENSE).
+MIT — see [LICENSE](LICENSE).
