@@ -60,11 +60,13 @@ metadata:
   name: postgres
 spec:
   instances: 1
+  # renovate: datasource=docker depName=ghcr.io/cloudnative-pg/postgresql
   imageName: ghcr.io/cloudnative-pg/postgresql:18.4-system-trixie
   postgresql:
     extensions:
       - name: pgvector
         image:
+          # renovate: datasource=docker depName=ghcr.io/cloudnative-pg/pgvector
           reference: ghcr.io/cloudnative-pg/pgvector:0.8.2-18-trixie
   bootstrap:
     initdb:
@@ -145,6 +147,7 @@ metadata:
 spec:
   members: 1
   type: ReplicaSet
+  # renovate: datasource=docker depName=quay.io/mongodb/mongodb-community-server
   version: "8.0.12"
   security:
     authentication:
@@ -198,6 +201,8 @@ metadata:
     app.kubernetes.io/name: rabbitmq
 spec:
   replicas: 1
+  # renovate: datasource=docker depName=rabbitmq
+  # rabbitmq_delayed_message_exchange requires RabbitMQ <4.3 (Mnesia removed in 4.3).
   image: rabbitmq:4.2.6-management
   rabbitmq:
     additionalPlugins:
@@ -212,6 +217,7 @@ spec:
           spec:
             initContainers:
               - name: download-delayed-plugin
+                # renovate: datasource=docker depName=curlimages/curl
                 image: curlimages/curl:8.12.1
                 command:
                   - sh
