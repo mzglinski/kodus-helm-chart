@@ -26,7 +26,7 @@
     },
     {
       "customType": "regex",
-      "managerFilePatterns": ["/^\\.github\\/.*\\.ya?ml$/"],
+      "managerFilePatterns": ["/^\\.github\\/.*\\.ya?ml$/", "/chart/ci/.*\\.ya?ml/"],
       "matchStrings": [
         "#\\s*renovate:\\s*datasource=(?<datasource>\\S+)\\s+depName=(?<depName>\\S+)(?:\\s+versioning=(?<versioning>\\S+))?\\s*\\n\\s*\\w[-\\w]*\\s*:\\s*[\"']?v?(?<currentValue>[^\"'\\s]+)[\"']?"
       ],
@@ -55,6 +55,25 @@
         "#\\s*renovate:\\s*datasource=(?<datasource>\\S+)\\s+depName=(?<depName>\\S+)(?:\\s+versioning=(?<versioning>\\S+))?\\s*\\n.*releases/download/v?(?<currentValue>[^/\"'\\s]+)/"
       ],
       "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/chart/ci/.*\\.ya?ml/"],
+      "matchStrings": [
+        "(?:imageName|reference|image):\\s*['\"]?(?<depName>[^@\\s'\"]+):(?<currentValue>[^\\s@'\"]+)(?:@(?<currentDigest>[^\\s'\"]+))?['\"]?"
+      ],
+      "datasourceTemplate": "docker"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/chart/ci/.*\\.ya?ml/"],
+      "matchStrings": [
+        "releases/download/v(?<currentValue>[^/\"'\\s]+)/rabbitmq_delayed_message_exchange-",
+        "echo \"(?<currentValue>[a-f0-9]{64})  /plugins/rabbitmq_delayed_message_exchange.ez\" | sha256sum -c -"
+      ],
+      "depNameTemplate": "rabbitmq-delayed-message-exchange",
+      "datasourceTemplate": "github-releases",
+      "packageNameTemplate": "rabbitmq/rabbitmq-delayed-message-exchange"
     }
   ],
   "packageRules": [
@@ -77,10 +96,14 @@
     {
       "matchDepNames": ["norwoodj/helm-docs"],
       "groupName": "helm-docs"
+    },
+    {
+      "description": "rabbitmq_delayed_message_exchange requires RabbitMQ <4.3 (Mnesia removed in 4.3)",
+      "matchPackageNames": ["rabbitmq", "docker.io/rabbitmq"],
+      "allowedVersions": "<4.3.0"
     }
   ],
   "ignorePaths": [
-    "**/node_modules/**",
-    "chart/ci/**"
+    "**/node_modules/**"
   ]
 }
