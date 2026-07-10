@@ -51,7 +51,7 @@ jobs:
           # renovate: datasource=github-releases depName=helm/helm
           version: v3.21.2
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           # chart-testing/yamale is not Python 3.14-ready yet; keep in sync with chart-testing-action.
           python-version: "3.12"
@@ -89,7 +89,7 @@ jobs:
           # renovate: datasource=github-releases depName=helm/helm
           version: v3.21.2
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
 
