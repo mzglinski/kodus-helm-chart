@@ -69,7 +69,7 @@ spec:
       - name: pgvector
         image:
           # renovate: datasource=docker depName=ghcr.io/cloudnative-pg/pgvector
-          reference: ghcr.io/cloudnative-pg/pgvector:0.8.2-18-trixie
+          reference: ghcr.io/cloudnative-pg/pgvector:0.8.4-18-trixie
   bootstrap:
     initdb:
       database: kodus_db
