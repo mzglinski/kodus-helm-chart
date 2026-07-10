@@ -54,7 +54,7 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           # chart-testing/yamale is not Python 3.14-ready yet; keep in sync with chart-testing-action.
-          python-version: "3.12"
+          python-version: "3.14"
 
       - name: Set up chart-testing
         uses: helm/chart-testing-action@v2.8.0
@@ -91,7 +91,7 @@ jobs:
 
       - uses: actions/setup-python@v6
         with:
-          python-version: "3.12"
+          python-version: "3.14"
 
       - name: Set up chart-testing
         uses: helm/chart-testing-action@v2.8.0
