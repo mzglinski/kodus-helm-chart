@@ -90,7 +90,6 @@
       "matchDepNames": ["kodustech/kodus-ai"],
       "groupName": "kodus-ai",
       "automerge": false,
-      "allowedVersions": "/^selfhosted-\\d+\\.\\d+\\.\\d+$/",
       "extractVersion": "^selfhosted-(?<version>.*)$"
     },
     {
