@@ -288,6 +288,8 @@ web:
 # Optionally run @nestjs/schedule crons on dedicated single-replica Deployments so HA
 # api/worker/webhooks replicas do not fire duplicate schedules. Disabled by default —
 # crons run in the main api/worker pods (fine for replicaCount: 1).
+# When enabled, each cronRunner.<component>.enabled flag controls whether that component's
+# crons move to a dedicated pod (leap-day schedule on the HA Deployment) or stay put.
 cronRunner:
   enabled: false
   # Standard 5-field cron (minute hour dom month dow). Feb 29 only — next run is a leap year.

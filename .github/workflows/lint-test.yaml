@@ -74,6 +74,9 @@ jobs:
       - name: Helm template (lint values)
         run: helm template kodus chart -f chart/ci/lint.yaml
 
+      - name: Verify cron schedule wiring
+        run: bash chart/ci/verify-cron-schedules.sh
+
   install-test:
     name: Install test
     runs-on: ubuntu-latest

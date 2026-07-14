@@ -1,0 +1,28 @@
+# cronRunner enabled with worker cron runner disabled — worker keeps real schedules.
+ingress:
+  web:
+    hostname: kodus.example.com
+  api:
+    hostname: api.kodus.example.com
+
+externalPostgresql:
+  host: postgres-pooler-rw
+  database: kodus_db
+  username: kodus
+
+externalMongodb:
+  host: mongodb-svc
+  database: kodus
+  username: kodus
+  authSource: admin
+
+externalRabbitmq:
+  host: rabbitmq
+  vhost: kodus-ai
+  username: kodus
+  password: ci-placeholder
+
+cronRunner:
+  enabled: true
+  worker:
+    enabled: false
