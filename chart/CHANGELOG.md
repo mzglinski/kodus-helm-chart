@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.2](https://github.com/mzglinski/kodus-helm-chart/compare/v0.1.1...v0.1.2) (2026-07-14)
+
+
+### Bug Fixes
+
+* only disable crons when dedicated cron runner is enabled ([#36](https://github.com/mzglinski/kodus-helm-chart/issues/36)) ([3659365](https://github.com/mzglinski/kodus-helm-chart/commit/36593658421bd51314266b35d54b31daac8962cd))
+
 ## [0.1.1](https://github.com/mzglinski/kodus-helm-chart/compare/v0.1.0...v0.1.1) (2026-07-10)
 
 
