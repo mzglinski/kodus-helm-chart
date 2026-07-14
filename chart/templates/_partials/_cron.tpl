@@ -14,17 +14,37 @@
 {{- end -}}
 {{- end -}}
 
+{{- define "kodus.cronEnabledForComponent" -}}
+{{- $root := .root -}}
+{{- $component := .component -}}
+{{- if not $root.Values.cronRunner.enabled -}}
+{{- if hasPrefix "cron-" $component -}}
+false
+{{- else -}}
+true
+{{- end -}}
+{{- else if eq $component "cron-api" -}}
+{{- $root.Values.cronRunner.api.enabled -}}
+{{- else if eq $component "cron-worker" -}}
+{{- $root.Values.cronRunner.worker.enabled -}}
+{{- else if eq $component "cron-worker-analytics" -}}
+{{- $root.Values.cronRunner.workerAnalytics.enabled -}}
+{{- else if eq $component "api" -}}
+{{- not $root.Values.cronRunner.api.enabled -}}
+{{- else if eq $component "worker" -}}
+{{- not $root.Values.cronRunner.worker.enabled -}}
+{{- else if eq $component "worker-analytics" -}}
+{{- not $root.Values.cronRunner.workerAnalytics.enabled -}}
+{{- else -}}
+{{- /* webhooks and other components have no dedicated cron runner */ -}}
+true
+{{- end -}}
+{{- end -}}
+
 {{- define "kodus.cronEnv" -}}
 {{- $root := .root -}}
 {{- $component := .component -}}
-{{- $enabled := true -}}
-{{- if $root.Values.cronRunner.enabled -}}
-{{- if or (eq $component "cron-api") (eq $component "cron-worker") (eq $component "cron-worker-analytics") (eq $component "worker-analytics") -}}
-{{- $enabled = true -}}
-{{- else -}}
-{{- $enabled = false -}}
-{{- end -}}
-{{- end -}}
+{{- $enabled := eq (include "kodus.cronEnabledForComponent" (dict "root" $root "component" $component)) "true" -}}
 - name: API_CRON_SYNC_CODE_REVIEW_REACTIONS
   value: {{ include "kodus.cronSchedule" (dict "root" $root "enabled" $enabled "schedule" $root.Values.config.cron.syncCodeReviewReactions) | quote }}
 - name: API_CRON_KODY_LEARNING
