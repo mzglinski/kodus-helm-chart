@@ -1,9 +1,6 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "config:recommended",
-    "mergeConfidence:all-badges"
-  ],
+  "extends": ["config:recommended", "mergeConfidence:all-badges"],
   "addLabels": ["renovate"],
   "assignees": ["mzglinski"],
   "configMigration": true,
@@ -26,7 +23,10 @@
     },
     {
       "customType": "regex",
-      "managerFilePatterns": ["/^\\.github\\/.*\\.ya?ml$/", "/chart/ci/.*\\.ya?ml/"],
+      "managerFilePatterns": [
+        "/^\\.github\\/.*\\.ya?ml$/",
+        "/chart/ci/.*\\.ya?ml/"
+      ],
       "matchStrings": [
         "#\\s*renovate:\\s*datasource=(?<datasource>\\S+)\\s+depName=(?<depName>\\S+)(?:\\s+versioning=(?<versioning>\\S+))?\\s*\\n\\s*\\w[-\\w]*\\s*:\\s*[\"']?v?(?<currentValue>[^\"'\\s]+)[\"']?"
       ],
@@ -93,6 +93,21 @@
       "extractVersion": "^selfhosted-(?<version>.*)$"
     },
     {
+      "matchDepNames": ["kodustech/kodus-ai"],
+      "matchUpdateTypes": ["patch"],
+      "semanticCommitType": "fix"
+    },
+    {
+      "matchDepNames": ["kodustech/kodus-ai"],
+      "matchUpdateTypes": ["minor"],
+      "semanticCommitType": "feat"
+    },
+    {
+      "matchDepNames": ["kodustech/kodus-ai"],
+      "matchUpdateTypes": ["major"],
+      "semanticCommitType": "feat!"
+    },
+    {
       "matchDepNames": ["norwoodj/helm-docs"],
       "groupName": "helm-docs"
     },
@@ -102,7 +117,5 @@
       "allowedVersions": "<4.3.0"
     }
   ],
-  "ignorePaths": [
-    "**/node_modules/**"
-  ]
+  "ignorePaths": ["**/node_modules/**"]
 }
