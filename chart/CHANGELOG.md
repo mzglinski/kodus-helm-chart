@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.3](https://github.com/mzglinski/kodus-helm-chart/compare/v0.1.2...v0.1.3) (2026-07-16)
+
+
+### Miscellaneous Chores
+
+* force release ([1f05926](https://github.com/mzglinski/kodus-helm-chart/commit/1f059260ba6e6d02987f3be2c7b5551f38b0faa2))
+
 ## [0.1.2](https://github.com/mzglinski/kodus-helm-chart/compare/v0.1.1...v0.1.2) (2026-07-14)
 
 
