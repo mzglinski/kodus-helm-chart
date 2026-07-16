@@ -5,6 +5,12 @@ on:
     branches:
       - main
       - master
+  workflow_dispatch:
+    inputs:
+      release-as:
+        description: "Release as"
+        required: false
+        default: ""
 
 concurrency:
   group: release-please-${{ github.ref }}
@@ -23,3 +29,4 @@ jobs:
         with:
           config-file: release-please-config.json
           token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
+          release-as: ${{ inputs.release-as }}
