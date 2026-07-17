@@ -140,7 +140,7 @@ jobs:
           set -euo pipefail
           if [ "${RUNNER_DEBUG:-0}" = "1" ]; then set -x; fi
           # renovate: datasource=github-releases depName=rabbitmq/cluster-operator
-          kubectl apply -f https://github.com/rabbitmq/cluster-operator/releases/download/v2.22.1/cluster-operator.yml
+          kubectl apply -f https://github.com/rabbitmq/cluster-operator/releases/download/v2.22.2/cluster-operator.yml
           bash chart/ci/wait-for-rabbitmq-operator.sh rabbitmq-system 300
 
       - name: Deploy CI dependencies
