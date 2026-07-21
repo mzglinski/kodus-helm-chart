@@ -91,22 +91,16 @@
       "groupName": "kodus-ai",
       "automerge": false,
       "extractVersion": "^selfhosted-(?<version>.*)$",
-      "minimumReleaseAge": "0 days"
-    },
-    {
-      "matchDepNames": ["kodustech/kodus-ai"],
-      "matchUpdateTypes": ["patch"],
-      "semanticCommitType": "fix"
-    },
-    {
-      "matchDepNames": ["kodustech/kodus-ai"],
-      "matchUpdateTypes": ["minor"],
-      "semanticCommitType": "feat"
-    },
-    {
-      "matchDepNames": ["kodustech/kodus-ai"],
-      "matchUpdateTypes": ["major"],
-      "semanticCommitType": "feat!"
+      "minimumReleaseAge": "0 days",
+      "patch": {
+        "semanticCommitType": "fix",
+      },
+      "minor": {
+        "semanticCommitType": "feat",
+      },
+      "major": {
+        "semanticCommitType": "feat!",
+      },
     },
     {
       "matchDepNames": ["norwoodj/helm-docs"],
