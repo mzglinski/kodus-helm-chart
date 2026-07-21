@@ -370,6 +370,7 @@ secretKeyRef:
 {{ include "kodus.apiDocsEnv" . }}
 {{ include "kodus.platformIntegrationEnv" . }}
 {{ include "kodus.llmEnv" . }}
+{{ include "kodus.langfuseEnv" . }}
 - name: COMPONENT_TYPE
   value: api
 - name: API_URL
@@ -385,6 +386,7 @@ secretKeyRef:
 {{ include "kodus.cronEnv" (dict "root" . "component" "worker") }}
 {{ include "kodus.platformIntegrationEnv" . }}
 {{ include "kodus.llmEnv" . }}
+{{ include "kodus.langfuseEnv" . }}
 - name: COMPONENT_TYPE
   value: worker
 - name: WORKER_ROLE
@@ -400,6 +402,7 @@ secretKeyRef:
 {{ include "kodus.apiDocsEnv" . }}
 {{ include "kodus.platformIntegrationEnv" . }}
 {{ include "kodus.llmEnv" . }}
+{{ include "kodus.langfuseEnv" . }}
 - name: COMPONENT_TYPE
   value: api
 - name: API_URL
@@ -414,6 +417,7 @@ secretKeyRef:
 {{ include "kodus.cronEnv" (dict "root" . "component" "cron-worker") }}
 {{ include "kodus.platformIntegrationEnv" . }}
 {{ include "kodus.llmEnv" . }}
+{{ include "kodus.langfuseEnv" . }}
 - name: COMPONENT_TYPE
   value: worker
 - name: WORKER_ROLE
@@ -427,6 +431,7 @@ secretKeyRef:
 {{ include "kodus.backendConfigEnv" . }}
 {{ include "kodus.cronEnv" (dict "root" . "component" "cron-worker-analytics") }}
 {{ include "kodus.llmEnv" . }}
+{{ include "kodus.langfuseEnv" . }}
 - name: COMPONENT_TYPE
   value: worker
 - name: WORKER_ROLE
@@ -440,6 +445,7 @@ secretKeyRef:
 {{ include "kodus.backendConfigEnv" . }}
 {{ include "kodus.cronEnv" (dict "root" . "component" "worker-analytics") }}
 {{ include "kodus.llmEnv" . }}
+{{ include "kodus.langfuseEnv" . }}
 - name: COMPONENT_TYPE
   value: worker
 - name: WORKER_ROLE
@@ -452,6 +458,7 @@ secretKeyRef:
 {{ include "kodus.commonEnv" . }}
 {{ include "kodus.backendConfigEnv" . }}
 {{ include "kodus.cronEnv" (dict "root" . "component" "webhooks") }}
+{{ include "kodus.langfuseEnv" . }}
 - name: COMPONENT_TYPE
   value: webhook
 {{- end -}}

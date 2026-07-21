@@ -38,6 +38,10 @@ Kodus uses NestJS `@Cron` inside the **api**, **worker**, and **webhooks** proce
 
 Set `cronRunner.enabled: true` when `api` / `worker` / `webhooks` run with more than one replica (fixed `replicaCount` or HPA `minReplicas` > 1): the chart can add single-replica **cron-api**, **cron-worker**, and **cron-worker-analytics** pods with real schedules. Each main Deployment only gets leap-day expressions (`0 0 29 2 *`) when its matching `cronRunner.<component>.enabled` is true — e.g. `cronRunner.worker.enabled: false` leaves worker crons on the HA worker pods. **webhooks** has no dedicated cron runner and always keeps real schedules. Many jobs also use Postgres advisory locks, but coverage is not complete.
 
+## Langfuse (optional)
+
+Opt-in LLM/review tracing via [Langfuse](https://langfuse.com). Set `langfuse.enabled: true`, `langfuse.publicKey`, and add `langfuse-secret-key` (or your `secrets.keys.langfuseSecretKey`) to the app Secret. Override `langfuse.baseUrl` for self-hosted Langfuse. Env is wired to api, worker, webhooks, worker-analytics, and cron runners — not web.
+
 ## Ingress (nginx)
 
 When using the bundled nginx ingress class, default annotations raise proxy buffer sizes for NextAuth session cookies (`Set-Cookie` response headers can exceed nginx’s 4k default). Override `ingress.annotations` if your controller uses different keys.
@@ -225,6 +229,10 @@ API ingress paths are gated on `api.enabled` and `webhooks.enabled` so disabled 
 | jobs.seeds.backoffLimit | int | `3` |  |
 | jobs.seeds.enabled | bool | `true` |  |
 | jobs.seeds.resources | object | `{}` |  |
+| langfuse.baseUrl | string | `"https://cloud.langfuse.com"` | Langfuse API base URL (cloud or self-hosted Langfuse). |
+| langfuse.enabled | bool | `false` | Set LANGFUSE_TRACING=true when enabled (app also requires public + secret keys). |
+| langfuse.environment | string | `""` | Trace environment label. When empty, the app falls back to API_NODE_ENV / development. |
+| langfuse.publicKey | string | `""` | Langfuse project public key (pk-…). Not a Secret; pair with secrets.keys.langfuseSecretKey. |
 | llm.cerebras.baseUrl | string | `"https://api.cerebras.ai/v1"` |  |
 | llm.google.provider | string | `"gemini"` |  |
 | llm.google.vertexLocation | string | `"us-central1"` |  |
@@ -265,6 +273,7 @@ API ingress paths are gated on `api.enabled` and `webhooks.enabled` so disabled 
 | secrets.keys.githubAppPrivateKey | string | `"github-app-private-key"` |  |
 | secrets.keys.googleAiApiKey | string | `"google-ai-api-key"` |  |
 | secrets.keys.groqApiKey | string | `"groq-api-key"` |  |
+| secrets.keys.langfuseSecretKey | string | `"langfuse-secret-key"` |  |
 | secrets.keys.mcpManagerComposioApiKey | string | `"mcp-manager-composio-api-key"` |  |
 | secrets.keys.moonshotApiKey | string | `"moonshot-api-key"` |  |
 | secrets.keys.morphllmApiKey | string | `"morphllm-api-key"` |  |

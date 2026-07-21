@@ -152,6 +152,19 @@ llm:
   cerebras:
     baseUrl: https://api.cerebras.ai/v1
 
+# Opt-in Langfuse LLM/review tracing (installer: LANGFUSE_*). Requires publicKey plus
+# LANGFUSE_SECRET_KEY in the app Secret (secrets.keys.langfuseSecretKey). Wired to api,
+# worker, webhooks, worker-analytics, and cron runners — not web.
+langfuse:
+  # -- Set LANGFUSE_TRACING=true when enabled (app also requires public + secret keys).
+  enabled: false
+  # -- Langfuse project public key (pk-…). Not a Secret; pair with secrets.keys.langfuseSecretKey.
+  publicKey: ""
+  # -- Langfuse API base URL (cloud or self-hosted Langfuse).
+  baseUrl: https://cloud.langfuse.com
+  # -- Trace environment label. When empty, the app falls back to API_NODE_ENV / development.
+  environment: ""
+
 workerAnalytics:
   # Enterprise analytics worker (installer: COMPOSE_PROFILES=analytics worker-analytics).
   enabled: false
@@ -385,7 +398,7 @@ ingress:
 # On upgrade, existing keys are preserved via lookup; only missing keys are generated.
 # With helm template / Argo CD dry-run, lookup returns empty and hook output shows freshly generated values.
 # URI-mode database keys (pg-uri, mongo-uri, rabbitmq-uri) must live in this Secret when secrets.existingSecret is set.
-# LLM API keys are never auto-generated — add them to the Secret before install (see README).
+# LLM API keys and Langfuse secret key are never auto-generated — add them to the Secret before install (see README).
 secrets:
   existingSecret: ""
   keys:
@@ -401,6 +414,7 @@ secrets:
     openRouterApiKey: open-router-api-key
     morphllmApiKey: morphllm-api-key
     exaKey: exa-key
+    langfuseSecretKey: langfuse-secret-key
     resendApiKey: resend-api-key
     smtpPass: smtp-pass
     e2bKey: e2b-key
