@@ -113,6 +113,16 @@
         "passwordKey": { "type": "string" }
       }
     },
+    "langfuse": {
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "publicKey": { "type": "string" },
+        "baseUrl": { "type": "string" },
+        "environment": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
     "worker": {
       "type": "object",
       "properties": {
