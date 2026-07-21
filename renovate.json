@@ -90,7 +90,8 @@
       "matchDepNames": ["kodustech/kodus-ai"],
       "groupName": "kodus-ai",
       "automerge": false,
-      "extractVersion": "^selfhosted-(?<version>.*)$"
+      "extractVersion": "^selfhosted-(?<version>.*)$",
+      "minimumReleaseAge": "0 days"
     },
     {
       "matchDepNames": ["kodustech/kodus-ai"],
