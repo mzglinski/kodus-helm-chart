@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.0](https://github.com/mzglinski/kodus-helm-chart/compare/v0.1.4...v0.2.0) (2026-07-21)
+
+
+### Features
+
+* add opt-in Langfuse LLM tracing configuration ([#43](https://github.com/mzglinski/kodus-helm-chart/issues/43)) ([22eb805](https://github.com/mzglinski/kodus-helm-chart/commit/22eb8053ddc5f70164aec481c6700e758d544392))
+
 ## [0.1.4](https://github.com/mzglinski/kodus-helm-chart/compare/v0.1.3...v0.1.4) (2026-07-21)
 
 
