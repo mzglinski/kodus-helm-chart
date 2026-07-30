@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/mzglinski/kodus-helm-chart/compare/v0.2.2...v0.3.0) (2026-07-30)
+
+
+### Features
+
+* add workflow stale job reaper env from kodus-ai 2.1.28 ([#50](https://github.com/mzglinski/kodus-helm-chart/issues/50)) ([cc67088](https://github.com/mzglinski/kodus-helm-chart/commit/cc670881afacd70ebfe8887b4ecef7f8c7190a86))
+
 ## [0.2.2](https://github.com/mzglinski/kodus-helm-chart/compare/v0.2.1...v0.2.2) (2026-07-30)
 
 
