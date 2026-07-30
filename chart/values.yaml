@@ -90,6 +90,7 @@ config:
     webhookProcessTimeoutMs: 600000
     codeReviewProcessTimeoutMs: 7200000
     outboxMaxAttempts: 10
+    staleJobTimeoutMinutes: 180
   cron:
     syncCodeReviewReactions: "0 0 * * *"
     kodyLearning: "0 0 * * 6"
@@ -100,6 +101,7 @@ config:
     staleReviewWatchdog: "*/30 * * * *"
     ssoTestSessionCleanup: "0 1 * * *"
     classifyOrphanedSessions: "0 */15 * * * *"
+    workflowStaleJobReaper: "0 */10 * * * *"
     kodyRulesDetectorSweepEnabled: true
   analytics:
     pgSchema: analytics
@@ -307,7 +309,8 @@ cronRunner:
   enabled: false
   # Standard 5-field cron (minute hour dom month dow). Feb 29 only — next run is a leap year.
   disabledSchedule: "0 0 29 2 *"
-  # 6-field cron (second minute hour dom month dow) for API_CRON_CLASSIFY_ORPHANED_SESSIONS.
+  # 6-field cron (second minute hour dom month dow) for classifyOrphanedSessions
+  # and workflowStaleJobReaper.
   disabledScheduleWithSeconds: "0 0 0 29 2 *"
   api:
     enabled: true

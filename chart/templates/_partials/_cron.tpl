@@ -63,6 +63,8 @@ true
   value: {{ include "kodus.cronSchedule" (dict "root" $root "enabled" $enabled "schedule" $root.Values.config.cron.ssoTestSessionCleanup) | quote }}
 - name: API_CRON_CLASSIFY_ORPHANED_SESSIONS
   value: {{ include "kodus.cronScheduleWithSeconds" (dict "root" $root "enabled" $enabled "schedule" $root.Values.config.cron.classifyOrphanedSessions) | quote }}
+- name: WORKFLOW_STALE_JOB_REAPER_CRON
+  value: {{ include "kodus.cronScheduleWithSeconds" (dict "root" $root "enabled" $enabled "schedule" $root.Values.config.cron.workflowStaleJobReaper) | quote }}
 {{- if $enabled }}
 - name: KODY_RULES_DETECTOR_SWEEP_ENABLED
   value: {{ $root.Values.config.cron.kodyRulesDetectorSweepEnabled | quote }}
