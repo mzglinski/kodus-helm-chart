@@ -90,7 +90,6 @@ config:
     webhookProcessTimeoutMs: 600000
     codeReviewProcessTimeoutMs: 7200000
     outboxMaxAttempts: 10
-    # Minutes a workflow job may sit in PROCESSING before the reaper marks it FAILED.
     staleJobTimeoutMinutes: 180
   cron:
     syncCodeReviewReactions: "0 0 * * *"
@@ -102,7 +101,6 @@ config:
     staleReviewWatchdog: "*/30 * * * *"
     ssoTestSessionCleanup: "0 1 * * *"
     classifyOrphanedSessions: "0 */15 * * * *"
-    # 6-field cron for WORKFLOW_STALE_JOB_REAPER_CRON (stale PROCESSING job reaper).
     workflowStaleJobReaper: "0 */10 * * * *"
     kodyRulesDetectorSweepEnabled: true
   analytics:
