@@ -88,6 +88,7 @@ API ingress paths are gated on `api.enabled` and `webhooks.enabled` so disabled 
 | config.cron.ssoTestSessionCleanup | string | `"0 1 * * *"` |  |
 | config.cron.staleReviewWatchdog | string | `"*/30 * * * *"` |  |
 | config.cron.syncCodeReviewReactions | string | `"0 0 * * *"` |  |
+| config.cron.workflowStaleJobReaper | string | `"0 */10 * * * *"` |  |
 | config.developmentMode | bool | `false` |  |
 | config.docs.basicUser | string | `""` |  |
 | config.docs.enabled | bool | `false` |  |
@@ -128,6 +129,7 @@ API ingress paths are gated on `api.enabled` and `webhooks.enabled` so disabled 
 | config.workflow.codeReviewProcessTimeoutMs | int | `7200000` |  |
 | config.workflow.outboxMaxAttempts | int | `10` |  |
 | config.workflow.publisherPrefetch | int | `5` |  |
+| config.workflow.staleJobTimeoutMinutes | int | `180` |  |
 | config.workflow.webhookPrefetch | int | `20` |  |
 | config.workflow.webhookProcessTimeoutMs | int | `600000` |  |
 | config.workflow.workerPrefetch | int | `20` |  |

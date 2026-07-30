@@ -13,6 +13,8 @@
   value: {{ .Values.config.workflow.codeReviewProcessTimeoutMs | quote }}
 - name: WORKFLOW_OUTBOX_MAX_ATTEMPTS
   value: {{ .Values.config.workflow.outboxMaxAttempts | quote }}
+- name: WORKFLOW_STALE_JOB_TIMEOUT_MINUTES
+  value: {{ .Values.config.workflow.staleJobTimeoutMinutes | quote }}
 {{- end -}}
 
 {{- define "kodus.runtimeFlagsEnv" -}}
