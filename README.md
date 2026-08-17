@@ -45,6 +45,7 @@ Chart-testing values and cluster fixtures:
 
 - `chart/ci/lint.yaml` — explicit `helm template` / `helm lint` values (no cluster required; named outside the `ci/*-values.yaml` glob so chart-testing does not run a separate install with it)
 - `chart/ci/kind-values.yaml` — `ct install` on kind (with `chart/ci/services/` operators)
+- `chart/ci/services/deps.yaml` — CNPG Cluster + PgBouncer Pooler, MongoDB, and RabbitMQ for kind install tests. The pooler uses **session** pooling (required for Postgres advisory locks used by Kodus) and sets `ignore_startup_parameters` for `statement_timeout` and `idle_in_transaction_session_timeout` — kodus-ai sends these on connect and PgBouncer rejects them with `FATAL 08P01` unless ignored. Production sizing lives in [kodus-deployment](https://github.com/mzglinski/kodus-deployment) (`terraform/modules/operators/postgresql/`).
 
 ## License
 
