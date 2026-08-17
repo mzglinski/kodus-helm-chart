@@ -65,6 +65,10 @@ spec:
   # renovate: datasource=docker depName=ghcr.io/cloudnative-pg/postgresql
   imageName: ghcr.io/cloudnative-pg/postgresql:18.6-system-trixie
   postgresql:
+    parameters:
+      # Primary must accept all PgBouncer session backends (1 pooler × default_pool_size)
+      # plus replication/CNPG overhead. Sized for kind install tests, not production.
+      max_connections: "100"
     extensions:
       - name: pgvector
         image:
@@ -91,7 +95,22 @@ spec:
   instances: 1
   type: rw
   pgbouncer:
-    poolMode: transaction
+    # Session mode is required for PostgreSQL session-level advisory locks
+    # (pg_try_advisory_lock). Transaction pooling returns the server connection
+    # after each statement while the lock stays on the old backend, so unlock
+    # runs on a different session and locks leak until pg_terminate_backend.
+    # Mirrors kodus-deployment terraform/modules/operators/postgresql/pooler.yaml.
+    poolMode: session
+    parameters:
+      max_client_conn: "8192"
+      # Session mode: one server backend per client for the session lifetime.
+      # CI runs a single pooler with chart-testing replica counts — 50 is enough.
+      default_pool_size: "50"
+      reserve_pool_size: "5"
+      # Appended by CNPG to extra_float_digits,options. Needed so clients that
+      # send these as startup parameters (e.g. CrossProcessEventsBridge LISTEN
+      # connections) are not rejected with FATAL 08P01.
+      ignore_startup_parameters: "statement_timeout,idle_in_transaction_session_timeout"
 ---
 apiVersion: postgresql.cnpg.io/v1
 kind: Database

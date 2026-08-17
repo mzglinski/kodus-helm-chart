@@ -5,6 +5,8 @@
 
 External PostgreSQL (with pgvector), MongoDB 8.x, and RabbitMQ (with `rabbitmq_delayed_message_exchange` plugin) are required.
 
+When connecting through **PgBouncer** (recommended for CNPG or other pooled Postgres), use **session** pooling — Kodus relies on session-scoped advisory locks (`pg_try_advisory_lock`). Transaction pooling breaks unlock and can block re-reviews. Configure PgBouncer to ignore startup parameters Kodus sends on connect: `statement_timeout` and `idle_in_transaction_session_timeout` (CNPG: `pgbouncer.parameters.ignore_startup_parameters`). See [kodus-deployment pooler.yaml](https://github.com/mzglinski/kodus-deployment/blob/main/terraform/modules/operators/postgresql/pooler.yaml) for a production reference.
+
 ## Resources
 
 The chart does not ship CPU/memory requests or limits — set `<component>.resources` (and `jobs.*.resources` for hook Jobs) for your cluster and workload. Tools such as [KRR](https://github.com/robusta-dev/krr) can help derive starting values from live usage. Requests are required when using HPA resource metrics.
