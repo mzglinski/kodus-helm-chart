@@ -2,8 +2,30 @@ apiVersion: v1
 entries:
   kodus:
   - apiVersion: v2
+    appVersion: 2.1.33
+    created: "2026-08-20T20:50:29.006450592Z"
+    description: Helm chart for self-hosted Kodus AI (stateless components only)
+    digest: 0ed4154be4c813bc843e9d9cf12acc4b44d674cb152b19719bf29cbe432d4d9e
+    home: https://kodus.io
+    keywords:
+    - kodus
+    - ai
+    - code-review
+    kubeVersion: '>=1.28.0-0'
+    maintainers:
+    - name: Community contributors
+      url: https://github.com/mzglinski/kodus-helm-chart
+    name: kodus
+    sources:
+    - https://github.com/kodustech/kodus-ai
+    - https://github.com/mzglinski/kodus-helm-chart
+    type: application
+    urls:
+    - https://mzglinski.github.io/kodus-helm-chart/kodus-0.3.4.tgz
+    version: 0.3.4
+  - apiVersion: v2
     appVersion: 2.1.32
-    created: "2026-08-17T08:59:44.249533053Z"
+    created: "2026-08-20T20:50:29.003589463Z"
     description: Helm chart for self-hosted Kodus AI (stateless components only)
     digest: ee78a054c984a54e630ac4f21209bdb36569d2b1da6bd4ae3df6d390a26b21f9
     home: https://kodus.io
@@ -25,7 +47,7 @@ entries:
     version: 0.3.3
   - apiVersion: v2
     appVersion: 2.1.31
-    created: "2026-08-17T08:59:44.246861733Z"
+    created: "2026-08-20T20:50:29.00177466Z"
     description: Helm chart for self-hosted Kodus AI (stateless components only)
     digest: 6b4605afd9027afb424a38eb30643c1100838c62c90f948c5ab19177da184857
     home: https://kodus.io
@@ -47,7 +69,7 @@ entries:
     version: 0.3.2
   - apiVersion: v2
     appVersion: 2.1.29
-    created: "2026-08-17T08:59:44.245041166Z"
+    created: "2026-08-20T20:50:28.999921331Z"
     description: Helm chart for self-hosted Kodus AI (stateless components only)
     digest: 967d70f78f43f64e8622350a00ec2a18386e1845f59445e3ce8dedcba03c099a
     home: https://kodus.io
@@ -69,7 +91,7 @@ entries:
     version: 0.3.1
   - apiVersion: v2
     appVersion: 2.1.28
-    created: "2026-08-17T08:59:44.243155752Z"
+    created: "2026-08-20T20:50:28.997668648Z"
     description: Helm chart for self-hosted Kodus AI (stateless components only)
     digest: 6b61c71531ac2279447945c4a4d057d6b720b924c84f53203c0f7c07a88017a0
     home: https://kodus.io
@@ -91,7 +113,7 @@ entries:
     version: 0.3.0
   - apiVersion: v2
     appVersion: 2.1.28
-    created: "2026-08-17T08:59:44.240549465Z"
+    created: "2026-08-20T20:50:28.995411498Z"
     description: Helm chart for self-hosted Kodus AI (stateless components only)
     digest: d3421d619e2662e712b53a93ea2a4ed902e62927556628e87747e61d9ef70c30
     home: https://kodus.io
@@ -113,7 +135,7 @@ entries:
     version: 0.2.2
   - apiVersion: v2
     appVersion: 2.1.27
-    created: "2026-08-17T08:59:44.238580124Z"
+    created: "2026-08-20T20:50:28.993524219Z"
     description: Helm chart for self-hosted Kodus AI (stateless components only)
     digest: d83679fe0466c3dca28f60b96b1a9f694678ac76a2fb650c47f0091786522ac5
     home: https://kodus.io
@@ -135,7 +157,7 @@ entries:
     version: 0.2.1
   - apiVersion: v2
     appVersion: 2.1.26
-    created: "2026-08-17T08:59:44.236785546Z"
+    created: "2026-08-20T20:50:28.991674204Z"
     description: Helm chart for self-hosted Kodus AI (stateless components only)
     digest: 8ea75dc2fc2d119ec4c7483a6c544f388f2cba558cb318426863adf17706efaf
     home: https://kodus.io
@@ -157,7 +179,7 @@ entries:
     version: 0.2.0
   - apiVersion: v2
     appVersion: 2.1.26
-    created: "2026-08-17T08:59:44.234645743Z"
+    created: "2026-08-20T20:50:28.988935846Z"
     description: Helm chart for self-hosted Kodus AI (stateless components only)
     digest: 0aaf16f48cb28bcf0e43c56c66b56e4e1cc69e592b1baf2ab59c06c38bc830a2
     home: https://kodus.io
@@ -179,7 +201,7 @@ entries:
     version: 0.1.4
   - apiVersion: v2
     appVersion: 2.1.25
-    created: "2026-08-17T08:59:44.23220453Z"
+    created: "2026-08-20T20:50:28.987154071Z"
     description: Helm chart for self-hosted Kodus AI (stateless components only)
     digest: a62d8163cba897669cd066a52ad9ca2cb7c38844d8282c782ad182a7a6edded9
     home: https://kodus.io
@@ -201,7 +223,7 @@ entries:
     version: 0.1.3
   - apiVersion: v2
     appVersion: 2.1.24
-    created: "2026-08-17T08:59:44.23043462Z"
+    created: "2026-08-20T20:50:28.98536097Z"
     description: Helm chart for self-hosted Kodus AI (stateless components only)
     digest: 196d2892c95997f07e616ebabf26e61746215d4d2460ca0635fea6f164c93255
     home: https://kodus.io
@@ -223,7 +245,7 @@ entries:
     version: 0.1.2
   - apiVersion: v2
     appVersion: 2.1.24
-    created: "2026-08-17T08:59:44.228571119Z"
+    created: "2026-08-20T20:50:28.983529723Z"
     description: Helm chart for self-hosted Kodus AI (stateless components only)
     digest: da5d4661a31fe1f0a22b26887ef30b75acd45af945c63e3d388b57524cbc91c7
     home: https://kodus.io
@@ -245,7 +267,7 @@ entries:
     version: 0.1.1
   - apiVersion: v2
     appVersion: 2.1.24
-    created: "2026-08-17T08:59:44.225936254Z"
+    created: "2026-08-20T20:50:28.981199892Z"
     description: Helm chart for self-hosted Kodus AI (stateless components only)
     digest: 4ff46379efe0a1ef4e2137c22cf2d264f03b4e65b94cbdc592074dad83958029
     home: https://kodus.io
@@ -265,4 +287,4 @@ entries:
     urls:
     - https://mzglinski.github.io/kodus-helm-chart/kodus-0.1.0.tgz
     version: 0.1.0
-generated: "2026-08-17T08:59:44.223910037Z"
+generated: "2026-08-20T20:50:28.97889734Z"
