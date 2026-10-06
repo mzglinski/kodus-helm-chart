@@ -15,18 +15,24 @@ image:
 imagePullSecrets: []
 
 global:
+  # -- Runtime mode (API_NODE_ENV). Self-hosted installs use production. development emits the SSO handoff cookie without Domain or Secure, so a web app on another host cannot read it.
   nodeEnv: production
+  # -- Database environment selector (API_DATABASE_ENV). Affects SSL defaults.
   databaseEnv: production
+  # -- Disable SSL on Postgres connections, including the analytics warehouse (API_DATABASE_DISABLE_SSL). Leave true for in-cluster Postgres without TLS. Set false when the server requires SSL.
   databaseDisableSsl: true
+  # -- Log verbosity (API_LOG_LEVEL). Self-hosted default is error.
   logLevel: error
+  # -- Pretty-print logs when true; JSON when false (API_LOG_PRETTY).
   logPretty: false
   rabbitmqEnabled: true
+  # -- Enable MCP integration (API_MCP_SERVER_ENABLED). When false, MCP code paths are skipped.
   mcpServerEnabled: false
-  # Self-hosted opt-in for beta-stage features (installer: BETA_FEATURES).
+  # -- Opt in to beta-stage features (BETA_FEATURES). Leave false for generally-available features only.
   betaFeatures: false
-  # Opt out of the daily self-hosted telemetry heartbeat (telemetry.kodus.io).
+  # -- Opt out of the daily anonymous heartbeat to telemetry.kodus.io (KODUS_TELEMETRY_DISABLED). The payload is aggregated counters and runtime metadata, not source code or identifiers.
   telemetryDisabled: true
-  # Optional heartbeat receiver override (installer: KODUS_TELEMETRY_ENDPOINT).
+  # -- Heartbeat receiver override (KODUS_TELEMETRY_ENDPOINT). Leave empty to use https://telemetry.kodus.io/v1/heartbeat.
   telemetryEndpoint: ""
   # Default pod termination grace for non-worker components (seconds).
   terminationGracePeriodSeconds: 30
@@ -60,30 +66,44 @@ global:
 config:
   globalApiContainerName: kodus_api
   rateMaxRequest: 100
+  # -- Rate limit interval in milliseconds (API_RATE_INTERVAL).
   rateInterval: 1000
   jwtExpiresIn: 365d
+  # -- Refresh token lifetime (API_JWT_REFRESH_EXPIRES_IN). Self-hosted default is 7d.
   jwtRefreshExpiresIn: 7d
+  # -- Bypass permission validation (API_DEVELOPMENT_MODE). Cloud development only.
   developmentMode: false
+  # -- Force the agent-based code review engine on for every organization (API_AGENT_REVIEW_ENABLED).
   agentReviewEnabled: true
+  # -- Wait for RabbitMQ to become reachable before the process finishes booting (API_RABBITMQ_WAIT).
   rabbitmqWait: true
+  # -- How long a worker keeps in-flight jobs during shutdown, in milliseconds, before it exits (API_WORKER_DRAIN_TIMEOUT_MS).
   workerDrainTimeoutMs: 600000
   docs:
     enabled: false
     path: /docs
     specPath: /openapi.json
+    # -- Basic auth user for API docs (API_DOCS_BASIC_USER). Leave empty to leave the docs open.
     basicUser: ""
   sandbox:
+    # -- Sandbox provider (SANDBOX_PROVIDER): auto, e2b, local, or none.
     provider: local
     # -- Local sandbox git clone budget in milliseconds (API_SANDBOX_CLONE_TIMEOUT_MS). Empty uses the app default of 120000. Raise it when a shallow fetch of a large monorepo exceeds that budget and the review continues with no sandbox.
     cloneTimeoutMs: ""
   email:
+    # -- Notifications email provider (API_NOTIFICATION_EMAIL_PROVIDER): resend or smtp.
     provider: resend
     userInviteBaseUrl: ""
     smtp:
+      # -- SMTP host (API_SMTP_HOST).
       host: ""
+      # -- SMTP port (API_SMTP_PORT).
       port: 587
+      # -- SMTP secure mode (API_SMTP_SECURE).
       secure: ""
+      # -- SMTP user (API_SMTP_USER).
       user: ""
+      # -- SMTP notifications sender address (API_SMTP_FROM).
       from: noreply@notifications.kodus.io
   workflow:
     workerPrefetch: 20
@@ -92,27 +112,46 @@ config:
     codeReviewPrefetch: 20
     webhookProcessTimeoutMs: 600000
     codeReviewProcessTimeoutMs: 7200000
+    # -- Retries before a workflow message is marked FAILED (WORKFLOW_OUTBOX_MAX_ATTEMPTS).
     outboxMaxAttempts: 10
+    # -- Minutes a workflow job may stay PROCESSING before the reaper marks it FAILED (WORKFLOW_STALE_JOB_TIMEOUT_MINUTES). Must exceed the longest legitimate run; 180 leaves margin past the 150 minute claim timeout.
     staleJobTimeoutMinutes: 180
   cron:
+    # -- Daily at 00:00 UTC (API_CRON_SYNC_CODE_REVIEW_REACTIONS).
     syncCodeReviewReactions: "0 0 * * *"
+    # -- Saturday at 00:00 UTC (API_CRON_KODY_LEARNING).
     kodyLearning: "0 0 * * 6"
+    # -- Every 2 minutes (API_CRON_CHECK_IF_PR_SHOULD_BE_APPROVED).
     checkIfPrShouldBeApproved: "*/2 * * * *"
+    # -- 1st of each month at 09:00 UTC. Organization review report email (API_CRON_ORG_REPORT).
     orgReport: "0 9 1 * *"
+    # -- 1st and 16th at 09:00 UTC. Per-repository review digest email (API_CRON_REPO_REPORT).
     repoReport: "0 9 1,16 * *"
+    # -- Every hour (API_CRON_SPEND_LIMIT_ALERT).
     spendLimitAlert: "0 * * * *"
+    # -- Reaps code review executions stuck IN_PROGRESS and finalizes their orphaned platform check runs (API_CRON_STALE_REVIEW_WATCHDOG).
     staleReviewWatchdog: "*/30 * * * *"
+    # -- Daily cleanup of expired SSO test sessions, 1 AM UTC (API_CRON_SSO_TEST_SESSION_CLEANUP).
     ssoTestSessionCleanup: "0 1 * * *"
+    # -- Reclassifies orphaned review sessions every 15 minutes (API_CRON_CLASSIFY_ORPHANED_SESSIONS). Cloud-only.
     classifyOrphanedSessions: "0 */15 * * * *"
+    # -- Cadence of the reaper that fails workflow jobs left PROCESSING after a worker is killed (WORKFLOW_STALE_JOB_REAPER_CRON). WORKFLOW_STALE_JOB_TIMEOUT_MINUTES still decides which jobs are eligible.
     workflowStaleJobReaper: "0 */10 * * * *"
     kodyRulesDetectorSweepEnabled: true
   analytics:
+    # -- Schema name in the analytics Postgres database (ANALYTICS_PG_DB_SCHEMA).
     pgSchema: analytics
+    # -- Upper bound on the analytics Postgres pool (ANALYTICS_PG_POOL_MAX).
     pgPoolMax: 5
+    # -- Cron for analytics ingestion (ANALYTICS_INGESTION_CRON). Default is every 30 minutes.
     ingestionCron: "*/30 * * * *"
+    # -- Disable the analytics ingestion cron regardless of worker role (ANALYTICS_INGESTION_DISABLED).
     ingestionDisabled: false
+    # -- Run one analytics ingestion pass on worker boot (ANALYTICS_INGESTION_RUN_ON_BOOT). Set false to wait for the first scheduled tick.
     ingestionRunOnBoot: true
+    # -- Cron for the LLM PR-type classifier on the analytics worker (ANALYTICS_CLASSIFIER_CRON).
     classifierCron: "*/15 * * * *"
+    # -- Disable the analytics PR-type classifier (ANALYTICS_CLASSIFIER_DISABLED).
     classifierDisabled: false
   github:
     # GitHub App numeric App ID (API_GITHUB_APP_ID).
@@ -128,6 +167,7 @@ config:
     supportDocsUrl: https://docs.kodus.io
     supportDiscordInviteUrl: https://discord.gg/QFzwwmNmdN
     supportTalkToFounderUrl: https://cal.com/gabrielmalinosqui/30min
+    # -- Documentation URL for rule-file detection, shown when configuring code review rules (WEB_RULE_FILES_DOCS).
     ruleFilesDocs: https://docs.kodus.io/how_to_use/en/code_review/configs/rules_file_detection
     tokenDocs:
       github: https://docs.kodus.io/how_to_use/en/code_review/general_config/github_pat
@@ -137,17 +177,16 @@ config:
       forgejo: https://docs.kodus.io/how_to_use/en/code_review/general_config/forgejo_pat
 
 llm:
-  # Concrete model ID for self-hosted env-mode LLM (e.g. gpt-4o, claude-sonnet-4-6, gemini-2.5-pro, kimi-k2.6).
-  # "auto" disables env-mode LLM — code reviews will not run until a model + API key are configured.
+  # -- Model id for env-mode LLM (API_LLM_PROVIDER_MODEL). "auto" lets the router pick per task.
   providerModel: auto
-  # OpenAI-compatible base URL (OpenAI, Moonshot/Kimi proxy, vLLM, etc.).
+  # -- OpenAI-compatible endpoint override, such as a local model proxy (API_OPENAI_FORCE_BASE_URL).
   openaiForceBaseUrl: ""
-  # Force temperature for every LLM call (e.g. "1" for reasoning models).
+  # -- Temperature for every LLM call in env-mode (API_LLM_TEMPERATURE_OVERRIDE). Set this when the model only accepts a fixed temperature, such as 1 for some reasoning models.
   temperatureOverride: ""
-  # Comma-separated baseURL substrings trusted for json_schema structured output.
+  # -- Comma-separated base URL substrings trusted for native json_schema output on OpenAI-compatible BYOK providers (API_TRUST_JSON_SCHEMA_BASE_URLS). Leave empty unless the proxy accepts json_schema.
   trustJsonSchemaBaseUrls: ""
   google:
-    # gemini (AI Studio) or vertex (Vertex AI service-account JSON, base64).
+    # -- Google AI provider (API_GOOGLE_AI_PROVIDER): gemini (AI Studio) or vertex (Vertex AI).
     provider: gemini
     vertexLocation: us-central1
   groq:
@@ -172,6 +211,7 @@ workerAnalytics:
   # Enterprise analytics worker (installer: COMPOSE_PROFILES=analytics worker-analytics).
   enabled: false
   replicaCount: 1
+  # -- Workload this worker handles (WORKER_ROLE). analytics is the Cockpit ingestion worker.
   role: analytics
   podAnnotations: {}
   podLabels: {}
@@ -192,11 +232,16 @@ mcpManager:
   port: 3101
   nodeEnv: production
   databaseEnv: production
+  # -- Log verbosity for the MCP Manager process (API_MCP_MANAGER_LOG_LEVEL).
   logLevel: info
+  # -- Comma-separated allowed origins for the MCP Manager HTTP server (API_MCP_MANAGER_CORS_ORIGINS).
   corsOrigins: "*"
+  # -- Comma-separated MCP providers to enable (API_MCP_MANAGER_MCP_PROVIDERS).
   mcpProviders: kodusmcp,composio,custom
+  # -- Postgres schema used by MCP Manager in the main database (API_MCP_MANAGER_PG_DB_SCHEMA).
   pgSchema: mcp-manager
   composioBaseUrl: https://backend.composio.dev/api/v3
+  # -- OAuth redirect URI MCP Manager uses when connecting providers from the web UI (API_MCP_MANAGER_REDIRECT_URI). Empty derives it from the public web URL.
   redirectUri: ""
   replicaCount: 1
   podAnnotations: {}
@@ -247,6 +292,7 @@ worker:
     # targetCPUUtilizationPercentage: 80
     # targetMemoryUtilizationPercentage: 80
     stabilizationWindowSeconds: 0
+  # -- Workload this worker handles (WORKER_ROLE). code-review owns the review queues; the image refuses to boot without a role.
   role: code-review
   podAnnotations: {}
   podLabels: {}
@@ -334,6 +380,7 @@ cronRunner:
   worker:
     enabled: true
     replicaCount: 1
+    # -- Workload this worker handles (WORKER_ROLE). code-review owns the review queues.
     role: code-review
     # -- Extra environment variables for the cron-worker container only. Replaces `global.extraEnv` entries with the same name.
     extraEnv: []
@@ -341,6 +388,7 @@ cronRunner:
   workerAnalytics:
     enabled: false
     replicaCount: 1
+    # -- Workload this worker handles (WORKER_ROLE). analytics is the Cockpit ingestion worker.
     role: analytics
     # -- Extra environment variables for the cron-worker-analytics container only. Replaces `global.extraEnv` entries with the same name.
     extraEnv: []
@@ -424,21 +472,30 @@ ingress:
 secrets:
   existingSecret: ""
   keys:
+    # -- Secret key for API_OPEN_AI_API_KEY. Required when the model is an OpenAI model.
     openaiApiKey: openai-api-key
     anthropicApiKey: anthropic-api-key
     googleAiApiKey: google-ai-api-key
     geminiApiKey: gemini-api-key
+    # -- Secret key for API_VERTEX_AI_API_KEY, a base64-encoded Vertex service account JSON. Leave unset to use Application Default Credentials.
     vertexAiApiKey: vertex-ai-api-key
     novitaAiApiKey: novita-ai-api-key
+    # -- Secret key for API_MOONSHOT_API_KEY (Kimi). Cloud-only; self-hosted does not use the Moonshot demo path.
     moonshotApiKey: moonshot-api-key
     groqApiKey: groq-api-key
     cerebrasApiKey: cerebras-api-key
+    # -- Secret key for API_OPEN_ROUTER_API_KEY.
     openRouterApiKey: open-router-api-key
+    # -- Secret key for API_MORPHLLM_API_KEY. When set, suggested edits are applied with MorphLLM instead of the main model.
     morphllmApiKey: morphllm-api-key
+    # -- Secret key for API_EXA_KEY. When set, review agents can search external documentation. Without it they use repository context only.
     exaKey: exa-key
     langfuseSecretKey: langfuse-secret-key
+    # -- Secret key for RESEND_API_KEY when email.provider is resend.
     resendApiKey: resend-api-key
+    # -- Secret key for API_SMTP_PASS.
     smtpPass: smtp-pass
+    # -- Secret key for API_E2B_KEY. Required when the sandbox provider is e2b.
     e2bKey: e2b-key
     apiDocsBasicPass: api-docs-basic-pass
     mcpManagerComposioApiKey: mcp-manager-composio-api-key
