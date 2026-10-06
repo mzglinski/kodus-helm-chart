@@ -40,10 +40,6 @@ Kodus uses NestJS `@Cron` inside the **api**, **worker**, and **webhooks** proce
 
 Set `cronRunner.enabled: true` when `api` / `worker` / `webhooks` run with more than one replica (fixed `replicaCount` or HPA `minReplicas` > 1): the chart can add single-replica **cron-api**, **cron-worker**, and **cron-worker-analytics** pods with real schedules. Each main Deployment only gets leap-day expressions (`0 0 29 2 *`) when its matching `cronRunner.<component>.enabled` is true — e.g. `cronRunner.worker.enabled: false` leaves worker crons on the HA worker pods. **webhooks** has no dedicated cron runner and always keeps real schedules. Many jobs also use Postgres advisory locks, but coverage is not complete.
 
-## Sandbox
-
-`config.sandbox.cloneTimeoutMs` sets `API_SANDBOX_CLONE_TIMEOUT_MS` on the API, worker, and their cron runners. Leave it empty for the app default of 120000 ms. Raise it when a shallow fetch of a large monorepo exceeds that budget and the review continues with no sandbox.
-
 ## Langfuse (optional)
 
 Opt-in LLM/review tracing via [Langfuse](https://langfuse.com). Set `langfuse.enabled: true`, `langfuse.publicKey`, and add `langfuse-secret-key` (or your `secrets.keys.langfuseSecretKey`) to the app Secret. Override `langfuse.baseUrl` for self-hosted Langfuse. Env is wired to api, worker, webhooks, worker-analytics, and cron runners — not web.
@@ -117,7 +113,7 @@ API ingress paths are gated on `api.enabled` and `webhooks.enabled` so disabled 
 | config.rabbitmqWait | bool | `true` |  |
 | config.rateInterval | int | `1000` |  |
 | config.rateMaxRequest | int | `100` |  |
-| config.sandbox.cloneTimeoutMs | string | `""` |  |
+| config.sandbox.cloneTimeoutMs | string | `""` | Local sandbox git clone budget in milliseconds (API_SANDBOX_CLONE_TIMEOUT_MS). Empty uses the app default of 120000. Raise it when a shallow fetch of a large monorepo exceeds that budget and the review continues with no sandbox. |
 | config.sandbox.provider | string | `"local"` |  |
 | config.web.nodeEnv | string | `"self-hosted"` |  |
 | config.web.ruleFilesDocs | string | `"https://docs.kodus.io/how_to_use/en/code_review/configs/rules_file_detection"` |  |
