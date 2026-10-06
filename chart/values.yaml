@@ -73,6 +73,7 @@ config:
     basicUser: ""
   sandbox:
     provider: local
+    # -- Local sandbox git clone budget in milliseconds (API_SANDBOX_CLONE_TIMEOUT_MS). Empty uses the app default of 120000. Raise it when a shallow fetch of a large monorepo exceeds that budget and the review continues with no sandbox.
     cloneTimeoutMs: ""
   email:
     provider: resend
