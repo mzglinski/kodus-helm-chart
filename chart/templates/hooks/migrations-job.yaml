@@ -45,6 +45,7 @@ spec:
               echo "Migrations complete."
           env:
             {{- include "kodus.jobEnv" . | nindent 12 }}
+            {{- include "kodus.extraEnv" (dict "root" . "component" "migrations") }}
           {{- $containerSecurityContext := include "kodus.containerSecurityContext" (dict "root" . "component" "hooks") -}}
           {{- if $containerSecurityContext }}
           securityContext:

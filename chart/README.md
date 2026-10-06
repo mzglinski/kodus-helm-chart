@@ -26,6 +26,32 @@ MongoDB `authSource` is emitted as `API_MG_DB_PRODUCTION_CONFIG` (`?authSource=â
 
 Container/service ports (`api.port`, `webhooks.port`) are the single source of truth for `API_PORT` / `API_WEBHOOKS_PORT` / `WEB_PORT_API` â€” do not duplicate them under `config.*`.
 
+## Extra environment variables
+
+`global.extraEnv` is appended to every container: api, worker, worker-analytics, webhooks, web, mcp-manager, cron runners, and the migration and seed Jobs. Each component has its own list (`api.extraEnv`, `worker.extraEnv`, `workerAnalytics.extraEnv`, `webhooks.extraEnv`, `web.extraEnv`, `mcpManager.extraEnv`, `cronRunner.api.extraEnv`, `cronRunner.worker.extraEnv`, `cronRunner.workerAnalytics.extraEnv`, `jobs.migrations.extraEnv`, `jobs.seeds.extraEnv`).
+
+Entries are appended after the chart's own variables. A component entry with the same `name` replaces the global entry. An extra entry that repeats a chart-managed name is kept as a later entry; the container receives that later value.
+
+Cron runners and hook Jobs use their own lists (`cronRunner.*.extraEnv`, `jobs.migrations.extraEnv`, `jobs.seeds.extraEnv`). Shared variables belong in `global.extraEnv`.
+
+Each entry needs `name` and either `value` or `valueFrom` (`value` wins when both are set). `false`, `0`, and `""` are passed through.
+
+```yaml
+global:
+  extraEnv:
+    - name: HTTP_PROXY
+      value: http://proxy.internal:3128
+api:
+  extraEnv:
+    - name: API_CUSTOM_FLAG
+      value: "true"
+    - name: API_CUSTOM_TOKEN
+      valueFrom:
+        secretKeyRef:
+          name: kodus-extra
+          key: token
+```
+
 ## Database migrations and seeds
 
 Migrations and seeds run as **pre-install/pre-upgrade hook Jobs** (`jobs.migrations`, `jobs.seeds`) before Deployments roll out; application pods never migrate on boot.
@@ -62,6 +88,7 @@ API ingress paths are gated on `api.enabled` and `webhooks.enabled` so disabled 
 | api.autoscaling.minReplicas | string | `nil` |  |
 | api.autoscaling.stabilizationWindowSeconds | int | `0` |  |
 | api.enabled | bool | `true` |  |
+| api.extraEnv | list | `[]` | Extra environment variables for the api container. Replaces `global.extraEnv` entries with the same name. |
 | api.nodeSelector | object | `{}` |  |
 | api.podAnnotations | object | `{}` |  |
 | api.podDisruptionBudget.enabled | bool | `false` |  |
@@ -135,16 +162,19 @@ API ingress paths are gated on `api.enabled` and `webhooks.enabled` so disabled 
 | config.workflow.webhookProcessTimeoutMs | int | `600000` |  |
 | config.workflow.workerPrefetch | int | `20` |  |
 | cronRunner.api.enabled | bool | `true` |  |
+| cronRunner.api.extraEnv | list | `[]` | Extra environment variables for the cron-api container only. Replaces `global.extraEnv` entries with the same name. |
 | cronRunner.api.replicaCount | int | `1` |  |
 | cronRunner.api.resources | object | `{}` |  |
 | cronRunner.disabledSchedule | string | `"0 0 29 2 *"` |  |
 | cronRunner.disabledScheduleWithSeconds | string | `"0 0 0 29 2 *"` |  |
 | cronRunner.enabled | bool | `false` |  |
 | cronRunner.worker.enabled | bool | `true` |  |
+| cronRunner.worker.extraEnv | list | `[]` | Extra environment variables for the cron-worker container only. Replaces `global.extraEnv` entries with the same name. |
 | cronRunner.worker.replicaCount | int | `1` |  |
 | cronRunner.worker.resources | object | `{}` |  |
 | cronRunner.worker.role | string | `"code-review"` |  |
 | cronRunner.workerAnalytics.enabled | bool | `false` |  |
+| cronRunner.workerAnalytics.extraEnv | list | `[]` | Extra environment variables for the cron-worker-analytics container only. Replaces `global.extraEnv` entries with the same name. |
 | cronRunner.workerAnalytics.replicaCount | int | `1` |  |
 | cronRunner.workerAnalytics.resources | object | `{}` |  |
 | cronRunner.workerAnalytics.role | string | `"analytics"` |  |
@@ -176,7 +206,7 @@ API ingress paths are gated on `api.enabled` and `webhooks.enabled` so disabled 
 | global.betaFeatures | bool | `false` |  |
 | global.databaseDisableSsl | bool | `true` |  |
 | global.databaseEnv | string | `"production"` |  |
-| global.extraEnv | list | `[]` |  |
+| global.extraEnv | list | `[]` | Extra environment variables for every container. Each entry is a Kubernetes EnvVar (`name` plus `value`, or `name` plus `valueFrom`). Appended after chart-managed variables; a component `extraEnv` entry with the same name replaces these. |
 | global.extraVolumeMounts | list | `[]` |  |
 | global.extraVolumes | list | `[]` |  |
 | global.logLevel | string | `"error"` |  |
@@ -227,10 +257,12 @@ API ingress paths are gated on `api.enabled` and `webhooks.enabled` so disabled 
 | jobs.migrations.activeDeadlineSeconds | int | `1800` |  |
 | jobs.migrations.backoffLimit | int | `3` |  |
 | jobs.migrations.enabled | bool | `true` |  |
+| jobs.migrations.extraEnv | list | `[]` | Extra environment variables for the migrations Job only. Replaces `global.extraEnv` entries with the same name. |
 | jobs.migrations.resources | object | `{}` |  |
 | jobs.seeds.activeDeadlineSeconds | int | `600` |  |
 | jobs.seeds.backoffLimit | int | `3` |  |
 | jobs.seeds.enabled | bool | `true` |  |
+| jobs.seeds.extraEnv | list | `[]` | Extra environment variables for the seeds Job only. Replaces `global.extraEnv` entries with the same name. |
 | jobs.seeds.resources | object | `{}` |  |
 | langfuse.baseUrl | string | `"https://cloud.langfuse.com"` | Langfuse API base URL (cloud or self-hosted Langfuse). |
 | langfuse.enabled | bool | `false` | Set LANGFUSE_TRACING=true when enabled (app also requires public + secret keys). |
@@ -249,6 +281,7 @@ API ingress paths are gated on `api.enabled` and `webhooks.enabled` so disabled 
 | mcpManager.corsOrigins | string | `"*"` |  |
 | mcpManager.databaseEnv | string | `"production"` |  |
 | mcpManager.enabled | bool | `true` |  |
+| mcpManager.extraEnv | list | `[]` | Extra environment variables for the MCP manager. Replaces `global.extraEnv` entries with the same name. |
 | mcpManager.logLevel | string | `"info"` |  |
 | mcpManager.mcpProviders | string | `"kodusmcp,composio,custom"` |  |
 | mcpManager.nodeEnv | string | `"production"` |  |
@@ -300,6 +333,7 @@ API ingress paths are gated on `api.enabled` and `webhooks.enabled` so disabled 
 | web.autoscaling.minReplicas | string | `nil` |  |
 | web.autoscaling.stabilizationWindowSeconds | int | `0` |  |
 | web.enabled | bool | `true` |  |
+| web.extraEnv | list | `[]` | Extra environment variables for the web container. Replaces `global.extraEnv` entries with the same name. |
 | web.mcpManagerHostname | string | `""` |  |
 | web.nodeSelector | object | `{}` |  |
 | web.podAnnotations | object | `{}` |  |
@@ -317,6 +351,7 @@ API ingress paths are gated on `api.enabled` and `webhooks.enabled` so disabled 
 | webhooks.autoscaling.minReplicas | string | `nil` |  |
 | webhooks.autoscaling.stabilizationWindowSeconds | int | `0` |  |
 | webhooks.enabled | bool | `true` |  |
+| webhooks.extraEnv | list | `[]` | Extra environment variables for the webhooks container. Replaces `global.extraEnv` entries with the same name. |
 | webhooks.nodeSelector | object | `{}` |  |
 | webhooks.podAnnotations | object | `{}` |  |
 | webhooks.podDisruptionBudget.enabled | bool | `false` |  |
@@ -333,6 +368,7 @@ API ingress paths are gated on `api.enabled` and `webhooks.enabled` so disabled 
 | worker.autoscaling.minReplicas | string | `nil` |  |
 | worker.autoscaling.stabilizationWindowSeconds | int | `0` |  |
 | worker.enabled | bool | `true` |  |
+| worker.extraEnv | list | `[]` | Extra environment variables for the worker container. Replaces `global.extraEnv` entries with the same name. |
 | worker.healthPort | int | `3334` |  |
 | worker.nodeSelector | object | `{}` |  |
 | worker.podAnnotations | object | `{}` |  |
@@ -347,6 +383,7 @@ API ingress paths are gated on `api.enabled` and `webhooks.enabled` so disabled 
 | worker.topologySpreadConstraints | list | `[]` |  |
 | workerAnalytics.affinity | object | `{}` |  |
 | workerAnalytics.enabled | bool | `false` |  |
+| workerAnalytics.extraEnv | list | `[]` | Extra environment variables for the analytics worker. Replaces `global.extraEnv` entries with the same name. |
 | workerAnalytics.nodeSelector | object | `{}` |  |
 | workerAnalytics.podAnnotations | object | `{}` |  |
 | workerAnalytics.podDisruptionBudget.enabled | bool | `false` |  |

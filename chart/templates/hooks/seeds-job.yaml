@@ -35,6 +35,7 @@ spec:
               echo "Seeds complete."
           env:
             {{- include "kodus.jobEnv" . | nindent 12 }}
+            {{- include "kodus.extraEnv" (dict "root" . "component" "seeds") }}
           {{- $containerSecurityContext := include "kodus.containerSecurityContext" (dict "root" . "component" "hooks") -}}
           {{- if $containerSecurityContext }}
           securityContext:

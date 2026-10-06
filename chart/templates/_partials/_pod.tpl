@@ -14,6 +14,10 @@
 {{- $cv = $root.Values.cronRunner.workerAnalytics -}}
 {{- else if eq $component "mcp-manager" -}}
 {{- $cv = $root.Values.mcpManager -}}
+{{- else if eq $component "migrations" -}}
+{{- $cv = $root.Values.jobs.migrations | default dict -}}
+{{- else if eq $component "seeds" -}}
+{{- $cv = $root.Values.jobs.seeds | default dict -}}
 {{- end -}}
 {{- $cv | toYaml -}}
 {{- end -}}

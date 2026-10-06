@@ -1,6 +1,25 @@
 {
   "$schema": "https://json-schema.org/draft-07/schema#",
   "type": "object",
+  "definitions": {
+    "extraEnv": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name"],
+        "additionalProperties": false,
+        "properties": {
+          "name": { "type": "string", "minLength": 1 },
+          "value": {},
+          "valueFrom": { "type": "object" }
+        },
+        "anyOf": [
+          { "required": ["value"] },
+          { "required": ["valueFrom"] }
+        ]
+      }
+    }
+  },
   "properties": {
     "image": {
       "type": "object",
@@ -15,7 +34,7 @@
       "type": "object",
       "properties": {
         "terminationGracePeriodSeconds": { "type": "integer", "minimum": 1 },
-        "extraEnv": { "type": "array" },
+        "extraEnv": { "$ref": "#/definitions/extraEnv" },
         "extraVolumes": { "type": "array" },
         "extraVolumeMounts": { "type": "array" }
       },
@@ -127,7 +146,8 @@
       "type": "object",
       "properties": {
         "healthPort": { "type": "integer", "minimum": 1 },
-        "terminationGracePeriodSeconds": { "type": "integer", "minimum": 1 }
+        "terminationGracePeriodSeconds": { "type": "integer", "minimum": 1 },
+        "extraEnv": { "$ref": "#/definitions/extraEnv" }
       },
       "additionalProperties": true
     },
@@ -135,7 +155,83 @@
       "type": "object",
       "properties": {
         "mcpManagerHostname": { "type": "string" },
-        "apiHostname": { "type": "string" }
+        "apiHostname": { "type": "string" },
+        "extraEnv": { "$ref": "#/definitions/extraEnv" }
+      },
+      "additionalProperties": true
+    },
+    "api": {
+      "type": "object",
+      "properties": {
+        "extraEnv": { "$ref": "#/definitions/extraEnv" }
+      },
+      "additionalProperties": true
+    },
+    "webhooks": {
+      "type": "object",
+      "properties": {
+        "extraEnv": { "$ref": "#/definitions/extraEnv" }
+      },
+      "additionalProperties": true
+    },
+    "workerAnalytics": {
+      "type": "object",
+      "properties": {
+        "extraEnv": { "$ref": "#/definitions/extraEnv" }
+      },
+      "additionalProperties": true
+    },
+    "mcpManager": {
+      "type": "object",
+      "properties": {
+        "extraEnv": { "$ref": "#/definitions/extraEnv" }
+      },
+      "additionalProperties": true
+    },
+    "cronRunner": {
+      "type": "object",
+      "properties": {
+        "api": {
+          "type": "object",
+          "properties": {
+            "extraEnv": { "$ref": "#/definitions/extraEnv" }
+          },
+          "additionalProperties": true
+        },
+        "worker": {
+          "type": "object",
+          "properties": {
+            "extraEnv": { "$ref": "#/definitions/extraEnv" }
+          },
+          "additionalProperties": true
+        },
+        "workerAnalytics": {
+          "type": "object",
+          "properties": {
+            "extraEnv": { "$ref": "#/definitions/extraEnv" }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
+    },
+    "jobs": {
+      "type": "object",
+      "properties": {
+        "migrations": {
+          "type": "object",
+          "properties": {
+            "extraEnv": { "$ref": "#/definitions/extraEnv" }
+          },
+          "additionalProperties": true
+        },
+        "seeds": {
+          "type": "object",
+          "properties": {
+            "extraEnv": { "$ref": "#/definitions/extraEnv" }
+          },
+          "additionalProperties": true
+        }
       },
       "additionalProperties": true
     },

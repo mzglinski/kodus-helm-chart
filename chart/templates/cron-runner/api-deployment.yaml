@@ -27,6 +27,7 @@ spec:
               protocol: TCP
           env:
             {{- include "kodus.cronRunnerApiEnv" . | nindent 12 }}
+            {{- include "kodus.extraEnv" (dict "root" . "component" "cron-api") }}
           {{- $containerSecurityContext := include "kodus.containerSecurityContext" (dict "root" . "component" "cron-api") -}}
           {{- if $containerSecurityContext }}
           securityContext:

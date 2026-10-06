@@ -28,7 +28,7 @@ spec:
               protocol: TCP
           env:
             {{- include "kodus.webEnv" . | nindent 12 }}
-            {{- include "kodus.extraEnv" (dict "root" . "component" "web") | nindent 12 }}
+            {{- include "kodus.extraEnv" (dict "root" . "component" "web") }}
           {{- $containerSecurityContext := include "kodus.containerSecurityContext" (dict "root" . "component" "web") -}}
           {{- if $containerSecurityContext }}
           securityContext:

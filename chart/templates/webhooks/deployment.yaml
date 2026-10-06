@@ -34,7 +34,7 @@ spec:
               protocol: TCP
           env:
             {{- include "kodus.webhooksEnv" . | nindent 12 }}
-            {{- include "kodus.extraEnv" (dict "root" . "component" "webhooks") | nindent 12 }}
+            {{- include "kodus.extraEnv" (dict "root" . "component" "webhooks") }}
           {{- $containerSecurityContext := include "kodus.containerSecurityContext" (dict "root" . "component" "webhooks") -}}
           {{- if $containerSecurityContext }}
           securityContext:

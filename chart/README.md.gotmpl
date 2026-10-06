@@ -25,6 +25,32 @@ MongoDB `authSource` is emitted as `API_MG_DB_PRODUCTION_CONFIG` (`?authSource=â
 
 Container/service ports (`api.port`, `webhooks.port`) are the single source of truth for `API_PORT` / `API_WEBHOOKS_PORT` / `WEB_PORT_API` â€” do not duplicate them under `config.*`.
 
+## Extra environment variables
+
+`global.extraEnv` is appended to every container: api, worker, worker-analytics, webhooks, web, mcp-manager, cron runners, and the migration and seed Jobs. Each component has its own list (`api.extraEnv`, `worker.extraEnv`, `workerAnalytics.extraEnv`, `webhooks.extraEnv`, `web.extraEnv`, `mcpManager.extraEnv`, `cronRunner.api.extraEnv`, `cronRunner.worker.extraEnv`, `cronRunner.workerAnalytics.extraEnv`, `jobs.migrations.extraEnv`, `jobs.seeds.extraEnv`).
+
+Entries are appended after the chart's own variables. A component entry with the same `name` replaces the global entry. An extra entry that repeats a chart-managed name is kept as a later entry; the container receives that later value.
+
+Cron runners and hook Jobs use their own lists (`cronRunner.*.extraEnv`, `jobs.migrations.extraEnv`, `jobs.seeds.extraEnv`). Shared variables belong in `global.extraEnv`.
+
+Each entry needs `name` and either `value` or `valueFrom` (`value` wins when both are set). `false`, `0`, and `""` are passed through.
+
+```yaml
+global:
+  extraEnv:
+    - name: HTTP_PROXY
+      value: http://proxy.internal:3128
+api:
+  extraEnv:
+    - name: API_CUSTOM_FLAG
+      value: "true"
+    - name: API_CUSTOM_TOKEN
+      valueFrom:
+        secretKeyRef:
+          name: kodus-extra
+          key: token
+```
+
 ## Database migrations and seeds
 
 Migrations and seeds run as **pre-install/pre-upgrade hook Jobs** (`jobs.migrations`, `jobs.seeds`) before Deployments roll out; application pods never migrate on boot.
