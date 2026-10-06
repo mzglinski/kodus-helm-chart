@@ -1,0 +1,83 @@
+# Overlay for chart/ci/verify-extra-env.sh. Merged on top of lint.yaml.
+global:
+  extraEnv:
+    - name: ONLY_GLOBAL
+      value: from-global
+    - name: SHARED
+      value: from-global
+    - name: FROM_GLOBAL_SECRET
+      valueFrom:
+        secretKeyRef:
+          name: kodus-extra
+          key: global-token
+
+api:
+  extraEnv:
+    - name: SHARED
+      value: from-api
+    - name: ONLY_API
+      value: from-api
+    - name: API_DEVELOPMENT_MODE
+      value: "true"
+    - name: BOOL_FALSE
+      value: false
+    - name: NUM_ZERO
+      value: 0
+
+worker:
+  extraEnv:
+    - name: ONLY_WORKER
+      value: from-worker
+    - name: WORKER_SECRET
+      valueFrom:
+        secretKeyRef:
+          name: kodus-extra
+          key: worker-token
+          optional: true
+
+workerAnalytics:
+  enabled: true
+  extraEnv:
+    - name: ONLY_WORKER_ANALYTICS
+      value: from-worker-analytics
+
+webhooks:
+  extraEnv:
+    - name: EMPTY_STRING
+      value: ""
+
+web:
+  extraEnv:
+    - name: ONLY_WEB
+      value: from-web
+
+mcpManager:
+  extraEnv:
+    - name: ONLY_MCP
+      value: from-mcp
+
+cronRunner:
+  enabled: true
+  api:
+    extraEnv:
+      - name: ONLY_CRON_API
+        value: from-cron-api
+  worker:
+    extraEnv:
+      - name: ONLY_CRON_WORKER
+        value: from-cron-worker
+  workerAnalytics:
+    enabled: true
+    extraEnv:
+      - name: ONLY_CRON_WORKER_ANALYTICS
+        value: from-cron-worker-analytics
+
+jobs:
+  migrations:
+    extraEnv:
+      - name: ONLY_MIGRATIONS
+        value: from-migrations
+  seeds:
+    extraEnv:
+      - name: ONLY_SEEDS
+        value: from-seeds

@@ -30,7 +30,7 @@ spec:
           command: ["node", "dist/apps/worker/main.js"]
           env:
             {{- include "kodus.workerEnv" . | nindent 12 }}
-            {{- include "kodus.extraEnv" (dict "root" . "component" "worker") | nindent 12 }}
+            {{- include "kodus.extraEnv" (dict "root" . "component" "worker") }}
           {{- $containerSecurityContext := include "kodus.containerSecurityContext" (dict "root" . "component" "worker") -}}
           {{- if $containerSecurityContext }}
           securityContext:

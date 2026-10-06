@@ -23,6 +23,7 @@ spec:
           command: ["node", "dist/apps/worker/main.js"]
           env:
             {{- include "kodus.cronRunnerWorkerEnv" . | nindent 12 }}
+            {{- include "kodus.extraEnv" (dict "root" . "component" "cron-worker") }}
           {{- $containerSecurityContext := include "kodus.containerSecurityContext" (dict "root" . "component" "cron-worker") -}}
           {{- if $containerSecurityContext }}
           securityContext:

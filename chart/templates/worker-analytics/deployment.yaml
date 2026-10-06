@@ -28,7 +28,7 @@ spec:
           command: ["node", "dist/apps/worker/main.js"]
           env:
             {{- include "kodus.workerAnalyticsEnv" . | nindent 12 }}
-            {{- include "kodus.extraEnv" (dict "root" . "component" "worker-analytics") | nindent 12 }}
+            {{- include "kodus.extraEnv" (dict "root" . "component" "worker-analytics") }}
           {{- $containerSecurityContext := include "kodus.containerSecurityContext" (dict "root" . "component" "worker-analytics") -}}
           {{- if $containerSecurityContext }}
           securityContext:

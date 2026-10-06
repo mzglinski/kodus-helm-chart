@@ -77,6 +77,9 @@ jobs:
       - name: Verify cron schedule wiring
         run: bash chart/ci/verify-cron-schedules.sh
 
+      - name: Verify extra env wiring
+        run: bash chart/ci/verify-extra-env.sh
+
   install-test:
     name: Install test
     runs-on: ubuntu-latest
