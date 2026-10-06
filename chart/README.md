@@ -99,36 +99,36 @@ API ingress paths are gated on `api.enabled` and `webhooks.enabled` so disabled 
 | api.resources | object | `{}` |  |
 | api.tolerations | list | `[]` |  |
 | api.topologySpreadConstraints | list | `[]` |  |
-| config.agentReviewEnabled | bool | `true` |  |
-| config.analytics.classifierCron | string | `"*/15 * * * *"` |  |
-| config.analytics.classifierDisabled | bool | `false` |  |
-| config.analytics.ingestionCron | string | `"*/30 * * * *"` |  |
-| config.analytics.ingestionDisabled | bool | `false` |  |
-| config.analytics.ingestionRunOnBoot | bool | `true` |  |
-| config.analytics.pgPoolMax | int | `5` |  |
-| config.analytics.pgSchema | string | `"analytics"` |  |
-| config.cron.checkIfPrShouldBeApproved | string | `"*/2 * * * *"` |  |
-| config.cron.classifyOrphanedSessions | string | `"0 */15 * * * *"` |  |
-| config.cron.kodyLearning | string | `"0 0 * * 6"` |  |
+| config.agentReviewEnabled | bool | `true` | Force the agent-based code review engine on for every organization (API_AGENT_REVIEW_ENABLED). |
+| config.analytics.classifierCron | string | `"*/15 * * * *"` | Cron for the LLM PR-type classifier on the analytics worker (ANALYTICS_CLASSIFIER_CRON). |
+| config.analytics.classifierDisabled | bool | `false` | Disable the analytics PR-type classifier (ANALYTICS_CLASSIFIER_DISABLED). |
+| config.analytics.ingestionCron | string | `"*/30 * * * *"` | Cron for analytics ingestion (ANALYTICS_INGESTION_CRON). Default is every 30 minutes. |
+| config.analytics.ingestionDisabled | bool | `false` | Disable the analytics ingestion cron regardless of worker role (ANALYTICS_INGESTION_DISABLED). |
+| config.analytics.ingestionRunOnBoot | bool | `true` | Run one analytics ingestion pass on worker boot (ANALYTICS_INGESTION_RUN_ON_BOOT). Set false to wait for the first scheduled tick. |
+| config.analytics.pgPoolMax | int | `5` | Upper bound on the analytics Postgres pool (ANALYTICS_PG_POOL_MAX). |
+| config.analytics.pgSchema | string | `"analytics"` | Schema name in the analytics Postgres database (ANALYTICS_PG_DB_SCHEMA). |
+| config.cron.checkIfPrShouldBeApproved | string | `"*/2 * * * *"` | Every 2 minutes (API_CRON_CHECK_IF_PR_SHOULD_BE_APPROVED). |
+| config.cron.classifyOrphanedSessions | string | `"0 */15 * * * *"` | Reclassifies orphaned review sessions every 15 minutes (API_CRON_CLASSIFY_ORPHANED_SESSIONS). Cloud-only. |
+| config.cron.kodyLearning | string | `"0 0 * * 6"` | Saturday at 00:00 UTC (API_CRON_KODY_LEARNING). |
 | config.cron.kodyRulesDetectorSweepEnabled | bool | `true` |  |
-| config.cron.orgReport | string | `"0 9 1 * *"` |  |
-| config.cron.repoReport | string | `"0 9 1,16 * *"` |  |
-| config.cron.spendLimitAlert | string | `"0 * * * *"` |  |
-| config.cron.ssoTestSessionCleanup | string | `"0 1 * * *"` |  |
-| config.cron.staleReviewWatchdog | string | `"*/30 * * * *"` |  |
-| config.cron.syncCodeReviewReactions | string | `"0 0 * * *"` |  |
-| config.cron.workflowStaleJobReaper | string | `"0 */10 * * * *"` |  |
-| config.developmentMode | bool | `false` |  |
-| config.docs.basicUser | string | `""` |  |
+| config.cron.orgReport | string | `"0 9 1 * *"` | 1st of each month at 09:00 UTC. Organization review report email (API_CRON_ORG_REPORT). |
+| config.cron.repoReport | string | `"0 9 1,16 * *"` | 1st and 16th at 09:00 UTC. Per-repository review digest email (API_CRON_REPO_REPORT). |
+| config.cron.spendLimitAlert | string | `"0 * * * *"` | Every hour (API_CRON_SPEND_LIMIT_ALERT). |
+| config.cron.ssoTestSessionCleanup | string | `"0 1 * * *"` | Daily cleanup of expired SSO test sessions, 1 AM UTC (API_CRON_SSO_TEST_SESSION_CLEANUP). |
+| config.cron.staleReviewWatchdog | string | `"*/30 * * * *"` | Reaps code review executions stuck IN_PROGRESS and finalizes their orphaned platform check runs (API_CRON_STALE_REVIEW_WATCHDOG). |
+| config.cron.syncCodeReviewReactions | string | `"0 0 * * *"` | Daily at 00:00 UTC (API_CRON_SYNC_CODE_REVIEW_REACTIONS). |
+| config.cron.workflowStaleJobReaper | string | `"0 */10 * * * *"` | Cadence of the reaper that fails workflow jobs left PROCESSING after a worker is killed (WORKFLOW_STALE_JOB_REAPER_CRON). WORKFLOW_STALE_JOB_TIMEOUT_MINUTES still decides which jobs are eligible. |
+| config.developmentMode | bool | `false` | Bypass permission validation (API_DEVELOPMENT_MODE). Cloud development only. |
+| config.docs.basicUser | string | `""` | Basic auth user for API docs (API_DOCS_BASIC_USER). Leave empty to leave the docs open. |
 | config.docs.enabled | bool | `false` |  |
 | config.docs.path | string | `"/docs"` |  |
 | config.docs.specPath | string | `"/openapi.json"` |  |
-| config.email.provider | string | `"resend"` |  |
-| config.email.smtp.from | string | `"noreply@notifications.kodus.io"` |  |
-| config.email.smtp.host | string | `""` |  |
-| config.email.smtp.port | int | `587` |  |
-| config.email.smtp.secure | string | `""` |  |
-| config.email.smtp.user | string | `""` |  |
+| config.email.provider | string | `"resend"` | Notifications email provider (API_NOTIFICATION_EMAIL_PROVIDER): resend or smtp. |
+| config.email.smtp.from | string | `"noreply@notifications.kodus.io"` | SMTP notifications sender address (API_SMTP_FROM). |
+| config.email.smtp.host | string | `""` | SMTP host (API_SMTP_HOST). |
+| config.email.smtp.port | int | `587` | SMTP port (API_SMTP_PORT). |
+| config.email.smtp.secure | string | `""` | SMTP secure mode (API_SMTP_SECURE). |
+| config.email.smtp.user | string | `""` | SMTP user (API_SMTP_USER). |
 | config.email.userInviteBaseUrl | string | `""` |  |
 | config.github.appId | string | `""` |  |
 | config.github.clientId | string | `""` |  |
@@ -136,14 +136,14 @@ API ingress paths are gated on `api.enabled` and `webhooks.enabled` so disabled 
 | config.github.webOAuthClientId | string | `""` |  |
 | config.globalApiContainerName | string | `"kodus_api"` |  |
 | config.jwtExpiresIn | string | `"365d"` |  |
-| config.jwtRefreshExpiresIn | string | `"7d"` |  |
-| config.rabbitmqWait | bool | `true` |  |
-| config.rateInterval | int | `1000` |  |
+| config.jwtRefreshExpiresIn | string | `"7d"` | Refresh token lifetime (API_JWT_REFRESH_EXPIRES_IN). Self-hosted default is 7d. |
+| config.rabbitmqWait | bool | `true` | Wait for RabbitMQ to become reachable before the process finishes booting (API_RABBITMQ_WAIT). |
+| config.rateInterval | int | `1000` | Rate limit interval in milliseconds (API_RATE_INTERVAL). |
 | config.rateMaxRequest | int | `100` |  |
 | config.sandbox.cloneTimeoutMs | string | `""` | Local sandbox git clone budget in milliseconds (API_SANDBOX_CLONE_TIMEOUT_MS). Empty uses the app default of 120000. Raise it when a shallow fetch of a large monorepo exceeds that budget and the review continues with no sandbox. |
-| config.sandbox.provider | string | `"local"` |  |
+| config.sandbox.provider | string | `"local"` | Sandbox provider (SANDBOX_PROVIDER): auto, e2b, local, or none. |
 | config.web.nodeEnv | string | `"self-hosted"` |  |
-| config.web.ruleFilesDocs | string | `"https://docs.kodus.io/how_to_use/en/code_review/configs/rules_file_detection"` |  |
+| config.web.ruleFilesDocs | string | `"https://docs.kodus.io/how_to_use/en/code_review/configs/rules_file_detection"` | Documentation URL for rule-file detection, shown when configuring code review rules (WEB_RULE_FILES_DOCS). |
 | config.web.supportDiscordInviteUrl | string | `"https://discord.gg/QFzwwmNmdN"` |  |
 | config.web.supportDocsUrl | string | `"https://docs.kodus.io"` |  |
 | config.web.supportTalkToFounderUrl | string | `"https://cal.com/gabrielmalinosqui/30min"` |  |
@@ -152,12 +152,12 @@ API ingress paths are gated on `api.enabled` and `webhooks.enabled` so disabled 
 | config.web.tokenDocs.forgejo | string | `"https://docs.kodus.io/how_to_use/en/code_review/general_config/forgejo_pat"` |  |
 | config.web.tokenDocs.github | string | `"https://docs.kodus.io/how_to_use/en/code_review/general_config/github_pat"` |  |
 | config.web.tokenDocs.gitlab | string | `"https://docs.kodus.io/how_to_use/en/code_review/general_config/gitlab_pat"` |  |
-| config.workerDrainTimeoutMs | int | `600000` |  |
+| config.workerDrainTimeoutMs | int | `600000` | How long a worker keeps in-flight jobs during shutdown, in milliseconds, before it exits (API_WORKER_DRAIN_TIMEOUT_MS). |
 | config.workflow.codeReviewPrefetch | int | `20` |  |
 | config.workflow.codeReviewProcessTimeoutMs | int | `7200000` |  |
-| config.workflow.outboxMaxAttempts | int | `10` |  |
+| config.workflow.outboxMaxAttempts | int | `10` | Retries before a workflow message is marked FAILED (WORKFLOW_OUTBOX_MAX_ATTEMPTS). |
 | config.workflow.publisherPrefetch | int | `5` |  |
-| config.workflow.staleJobTimeoutMinutes | int | `180` |  |
+| config.workflow.staleJobTimeoutMinutes | int | `180` | Minutes a workflow job may stay PROCESSING before the reaper marks it FAILED (WORKFLOW_STALE_JOB_TIMEOUT_MINUTES). Must exceed the longest legitimate run; 180 leaves margin past the 150 minute claim timeout. |
 | config.workflow.webhookPrefetch | int | `20` |  |
 | config.workflow.webhookProcessTimeoutMs | int | `600000` |  |
 | config.workflow.workerPrefetch | int | `20` |  |
@@ -172,12 +172,12 @@ API ingress paths are gated on `api.enabled` and `webhooks.enabled` so disabled 
 | cronRunner.worker.extraEnv | list | `[]` | Extra environment variables for the cron-worker container only. Replaces `global.extraEnv` entries with the same name. |
 | cronRunner.worker.replicaCount | int | `1` |  |
 | cronRunner.worker.resources | object | `{}` |  |
-| cronRunner.worker.role | string | `"code-review"` |  |
+| cronRunner.worker.role | string | `"code-review"` | Workload this worker handles (WORKER_ROLE). code-review owns the review queues. |
 | cronRunner.workerAnalytics.enabled | bool | `false` |  |
 | cronRunner.workerAnalytics.extraEnv | list | `[]` | Extra environment variables for the cron-worker-analytics container only. Replaces `global.extraEnv` entries with the same name. |
 | cronRunner.workerAnalytics.replicaCount | int | `1` |  |
 | cronRunner.workerAnalytics.resources | object | `{}` |  |
-| cronRunner.workerAnalytics.role | string | `"analytics"` |  |
+| cronRunner.workerAnalytics.role | string | `"analytics"` | Workload this worker handles (WORKER_ROLE). analytics is the Cockpit ingestion worker. |
 | externalMongodb.authSource | string | `"admin"` |  |
 | externalMongodb.database | string | `"kodus"` |  |
 | externalMongodb.existingSecret | string | `""` |  |
@@ -203,16 +203,16 @@ API ingress paths are gated on `api.enabled` and `webhooks.enabled` so disabled 
 | externalRabbitmq.usernameKey | string | `"username"` |  |
 | externalRabbitmq.vhost | string | `"kodus-ai"` |  |
 | fullnameOverride | string | `""` |  |
-| global.betaFeatures | bool | `false` |  |
-| global.databaseDisableSsl | bool | `true` |  |
-| global.databaseEnv | string | `"production"` |  |
+| global.betaFeatures | bool | `false` | Opt in to beta-stage features (BETA_FEATURES). Leave false for generally-available features only. |
+| global.databaseDisableSsl | bool | `true` | Disable SSL on Postgres connections, including the analytics warehouse (API_DATABASE_DISABLE_SSL). Leave true for in-cluster Postgres without TLS. Set false when the server requires SSL. |
+| global.databaseEnv | string | `"production"` | Database environment selector (API_DATABASE_ENV). Affects SSL defaults. |
 | global.extraEnv | list | `[]` | Extra environment variables for every container. Each entry is a Kubernetes EnvVar (`name` plus `value`, or `name` plus `valueFrom`). Appended after chart-managed variables; a component `extraEnv` entry with the same name replaces these. |
 | global.extraVolumeMounts | list | `[]` |  |
 | global.extraVolumes | list | `[]` |  |
-| global.logLevel | string | `"error"` |  |
-| global.logPretty | bool | `false` |  |
-| global.mcpServerEnabled | bool | `false` |  |
-| global.nodeEnv | string | `"production"` |  |
+| global.logLevel | string | `"error"` | Log verbosity (API_LOG_LEVEL). Self-hosted default is error. |
+| global.logPretty | bool | `false` | Pretty-print logs when true; JSON when false (API_LOG_PRETTY). |
+| global.mcpServerEnabled | bool | `false` | Enable MCP integration (API_MCP_SERVER_ENABLED). When false, MCP code paths are skipped. |
+| global.nodeEnv | string | `"production"` | Runtime mode (API_NODE_ENV). Self-hosted installs use production. development emits the SSO handoff cookie without Domain or Secure, so a web app on another host cannot read it. |
 | global.pod.affinity | object | `{}` |  |
 | global.pod.annotations | object | `{}` |  |
 | global.pod.labels | object | `{}` |  |
@@ -228,8 +228,8 @@ API ingress paths are gated on `api.enabled` and `webhooks.enabled` so disabled 
 | global.securityContext.allowPrivilegeEscalation | bool | `false` |  |
 | global.securityContext.capabilities.drop[0] | string | `"ALL"` |  |
 | global.securityContext.readOnlyRootFilesystem | bool | `false` |  |
-| global.telemetryDisabled | bool | `true` |  |
-| global.telemetryEndpoint | string | `""` |  |
+| global.telemetryDisabled | bool | `true` | Opt out of the daily anonymous heartbeat to telemetry.kodus.io (KODUS_TELEMETRY_DISABLED). The payload is aggregated counters and runtime metadata, not source code or identifiers. |
+| global.telemetryEndpoint | string | `""` | Heartbeat receiver override (KODUS_TELEMETRY_ENDPOINT). Leave empty to use https://telemetry.kodus.io/v1/heartbeat. |
 | global.terminationGracePeriodSeconds | int | `30` |  |
 | image.pullPolicy | string | `"IfNotPresent"` |  |
 | image.registry | string | `"ghcr.io/kodustech"` |  |
@@ -269,28 +269,28 @@ API ingress paths are gated on `api.enabled` and `webhooks.enabled` so disabled 
 | langfuse.environment | string | `""` | Trace environment label. When empty, the app falls back to API_NODE_ENV / development. |
 | langfuse.publicKey | string | `""` | Langfuse project public key (pk-…). Not a Secret; pair with secrets.keys.langfuseSecretKey. |
 | llm.cerebras.baseUrl | string | `"https://api.cerebras.ai/v1"` |  |
-| llm.google.provider | string | `"gemini"` |  |
+| llm.google.provider | string | `"gemini"` | Google AI provider (API_GOOGLE_AI_PROVIDER): gemini (AI Studio) or vertex (Vertex AI). |
 | llm.google.vertexLocation | string | `"us-central1"` |  |
 | llm.groq.baseUrl | string | `"https://api.groq.com/openai/v1"` |  |
-| llm.openaiForceBaseUrl | string | `""` |  |
-| llm.providerModel | string | `"auto"` |  |
-| llm.temperatureOverride | string | `""` |  |
-| llm.trustJsonSchemaBaseUrls | string | `""` |  |
+| llm.openaiForceBaseUrl | string | `""` | OpenAI-compatible endpoint override, such as a local model proxy (API_OPENAI_FORCE_BASE_URL). |
+| llm.providerModel | string | `"auto"` | Model id for env-mode LLM (API_LLM_PROVIDER_MODEL). "auto" lets the router pick per task. |
+| llm.temperatureOverride | string | `""` | Temperature for every LLM call in env-mode (API_LLM_TEMPERATURE_OVERRIDE). Set this when the model only accepts a fixed temperature, such as 1 for some reasoning models. |
+| llm.trustJsonSchemaBaseUrls | string | `""` | Comma-separated base URL substrings trusted for native json_schema output on OpenAI-compatible BYOK providers (API_TRUST_JSON_SCHEMA_BASE_URLS). Leave empty unless the proxy accepts json_schema. |
 | mcpManager.affinity | object | `{}` |  |
 | mcpManager.composioBaseUrl | string | `"https://backend.composio.dev/api/v3"` |  |
-| mcpManager.corsOrigins | string | `"*"` |  |
+| mcpManager.corsOrigins | string | `"*"` | Comma-separated allowed origins for the MCP Manager HTTP server (API_MCP_MANAGER_CORS_ORIGINS). |
 | mcpManager.databaseEnv | string | `"production"` |  |
 | mcpManager.enabled | bool | `true` |  |
 | mcpManager.extraEnv | list | `[]` | Extra environment variables for the MCP manager. Replaces `global.extraEnv` entries with the same name. |
-| mcpManager.logLevel | string | `"info"` |  |
-| mcpManager.mcpProviders | string | `"kodusmcp,composio,custom"` |  |
+| mcpManager.logLevel | string | `"info"` | Log verbosity for the MCP Manager process (API_MCP_MANAGER_LOG_LEVEL). |
+| mcpManager.mcpProviders | string | `"kodusmcp,composio,custom"` | Comma-separated MCP providers to enable (API_MCP_MANAGER_MCP_PROVIDERS). |
 | mcpManager.nodeEnv | string | `"production"` |  |
 | mcpManager.nodeSelector | object | `{}` |  |
-| mcpManager.pgSchema | string | `"mcp-manager"` |  |
+| mcpManager.pgSchema | string | `"mcp-manager"` | Postgres schema used by MCP Manager in the main database (API_MCP_MANAGER_PG_DB_SCHEMA). |
 | mcpManager.podAnnotations | object | `{}` |  |
 | mcpManager.podLabels | object | `{}` |  |
 | mcpManager.port | int | `3101` |  |
-| mcpManager.redirectUri | string | `""` |  |
+| mcpManager.redirectUri | string | `""` | OAuth redirect URI MCP Manager uses when connecting providers from the web UI (API_MCP_MANAGER_REDIRECT_URI). Empty derives it from the public web URL. |
 | mcpManager.replicaCount | int | `1` |  |
 | mcpManager.resources | object | `{}` |  |
 | mcpManager.tolerations | list | `[]` |  |
@@ -302,8 +302,8 @@ API ingress paths are gated on `api.enabled` and `webhooks.enabled` so disabled 
 | secrets.keys.anthropicApiKey | string | `"anthropic-api-key"` |  |
 | secrets.keys.apiDocsBasicPass | string | `"api-docs-basic-pass"` |  |
 | secrets.keys.cerebrasApiKey | string | `"cerebras-api-key"` |  |
-| secrets.keys.e2bKey | string | `"e2b-key"` |  |
-| secrets.keys.exaKey | string | `"exa-key"` |  |
+| secrets.keys.e2bKey | string | `"e2b-key"` | Secret key for API_E2B_KEY. Required when the sandbox provider is e2b. |
+| secrets.keys.exaKey | string | `"exa-key"` | Secret key for API_EXA_KEY. When set, review agents can search external documentation. Without it they use repository context only. |
 | secrets.keys.geminiApiKey | string | `"gemini-api-key"` |  |
 | secrets.keys.githubAppClientSecret | string | `"github-app-client-secret"` |  |
 | secrets.keys.githubAppPrivateKey | string | `"github-app-private-key"` |  |
@@ -311,14 +311,14 @@ API ingress paths are gated on `api.enabled` and `webhooks.enabled` so disabled 
 | secrets.keys.groqApiKey | string | `"groq-api-key"` |  |
 | secrets.keys.langfuseSecretKey | string | `"langfuse-secret-key"` |  |
 | secrets.keys.mcpManagerComposioApiKey | string | `"mcp-manager-composio-api-key"` |  |
-| secrets.keys.moonshotApiKey | string | `"moonshot-api-key"` |  |
-| secrets.keys.morphllmApiKey | string | `"morphllm-api-key"` |  |
+| secrets.keys.moonshotApiKey | string | `"moonshot-api-key"` | Secret key for API_MOONSHOT_API_KEY (Kimi). Cloud-only; self-hosted does not use the Moonshot demo path. |
+| secrets.keys.morphllmApiKey | string | `"morphllm-api-key"` | Secret key for API_MORPHLLM_API_KEY. When set, suggested edits are applied with MorphLLM instead of the main model. |
 | secrets.keys.novitaAiApiKey | string | `"novita-ai-api-key"` |  |
-| secrets.keys.openRouterApiKey | string | `"open-router-api-key"` |  |
-| secrets.keys.openaiApiKey | string | `"openai-api-key"` |  |
-| secrets.keys.resendApiKey | string | `"resend-api-key"` |  |
-| secrets.keys.smtpPass | string | `"smtp-pass"` |  |
-| secrets.keys.vertexAiApiKey | string | `"vertex-ai-api-key"` |  |
+| secrets.keys.openRouterApiKey | string | `"open-router-api-key"` | Secret key for API_OPEN_ROUTER_API_KEY. |
+| secrets.keys.openaiApiKey | string | `"openai-api-key"` | Secret key for API_OPEN_AI_API_KEY. Required when the model is an OpenAI model. |
+| secrets.keys.resendApiKey | string | `"resend-api-key"` | Secret key for RESEND_API_KEY when email.provider is resend. |
+| secrets.keys.smtpPass | string | `"smtp-pass"` | Secret key for API_SMTP_PASS. |
+| secrets.keys.vertexAiApiKey | string | `"vertex-ai-api-key"` | Secret key for API_VERTEX_AI_API_KEY, a base64-encoded Vertex service account JSON. Leave unset to use Application Default Credentials. |
 | secrets.keys.webOAuthGithubClientSecret | string | `"web-oauth-github-client-secret"` |  |
 | serviceAccount.annotations | object | `{}` |  |
 | serviceAccount.create | bool | `false` |  |
@@ -377,7 +377,7 @@ API ingress paths are gated on `api.enabled` and `webhooks.enabled` so disabled 
 | worker.podLabels | object | `{}` |  |
 | worker.replicaCount | int | `1` |  |
 | worker.resources | object | `{}` |  |
-| worker.role | string | `"code-review"` |  |
+| worker.role | string | `"code-review"` | Workload this worker handles (WORKER_ROLE). code-review owns the review queues; the image refuses to boot without a role. |
 | worker.terminationGracePeriodSeconds | int | `660` |  |
 | worker.tolerations | list | `[]` |  |
 | worker.topologySpreadConstraints | list | `[]` |  |
@@ -391,6 +391,6 @@ API ingress paths are gated on `api.enabled` and `webhooks.enabled` so disabled 
 | workerAnalytics.podLabels | object | `{}` |  |
 | workerAnalytics.replicaCount | int | `1` |  |
 | workerAnalytics.resources | object | `{}` |  |
-| workerAnalytics.role | string | `"analytics"` |  |
+| workerAnalytics.role | string | `"analytics"` | Workload this worker handles (WORKER_ROLE). analytics is the Cockpit ingestion worker. |
 | workerAnalytics.tolerations | list | `[]` |  |
 | workerAnalytics.topologySpreadConstraints | list | `[]` |  |
