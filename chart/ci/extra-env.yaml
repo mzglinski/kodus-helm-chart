@@ -1,4 +1,5 @@
 # Overlay for chart/ci/verify-extra-env.sh. Merged on top of lint.yaml.
+# Not named *-values.yaml: chart-testing installs each of those files on its own.
 global:
   extraEnv:
     - name: ONLY_GLOBAL

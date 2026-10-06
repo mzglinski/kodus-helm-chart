@@ -136,7 +136,7 @@ expect_failure() {
   rm -f "${err_file}"
 }
 
-manifest="$(render -f "${chart_dir}/ci/extra-env-values.yaml")"
+manifest="$(render -f "${chart_dir}/ci/extra-env.yaml")"
 
 workloads=(
   "Deployment kodus-api exact"
