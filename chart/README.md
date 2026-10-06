@@ -113,9 +113,8 @@ API ingress paths are gated on `api.enabled` and `webhooks.enabled` so disabled 
 | config.rabbitmqWait | bool | `true` |  |
 | config.rateInterval | int | `1000` |  |
 | config.rateMaxRequest | int | `100` |  |
+| config.sandbox.cloneTimeoutMs | string | `""` | Local sandbox git clone budget in milliseconds (API_SANDBOX_CLONE_TIMEOUT_MS). Empty uses the app default of 120000. Raise it when a shallow fetch of a large monorepo exceeds that budget and the review continues with no sandbox. |
 | config.sandbox.provider | string | `"local"` |  |
-| config.web.helpdeskHostname | string | `""` |  |
-| config.web.helpdeskPort | int | `3004` |  |
 | config.web.nodeEnv | string | `"self-hosted"` |  |
 | config.web.ruleFilesDocs | string | `"https://docs.kodus.io/how_to_use/en/code_review/configs/rules_file_detection"` |  |
 | config.web.supportDiscordInviteUrl | string | `"https://discord.gg/QFzwwmNmdN"` |  |

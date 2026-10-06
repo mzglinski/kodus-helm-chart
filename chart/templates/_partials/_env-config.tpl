@@ -81,12 +81,6 @@ then it is harmless. Required for browser SSO redirects and SAML ACS URLs.
 - name: GLOBAL_MCP_MANAGER_CONTAINER_NAME
   value: {{ include "kodus.internalMcpManagerHostname" . | quote }}
 {{- end }}
-{{- if .Values.config.web.helpdeskHostname }}
-- name: WEB_HOSTNAME_HELPDESK
-  value: {{ .Values.config.web.helpdeskHostname | quote }}
-{{- end }}
-- name: WEB_PORT_HELPDESK
-  value: {{ .Values.config.web.helpdeskPort | quote }}
 - name: WEB_RULE_FILES_DOCS
   value: {{ .Values.config.web.ruleFilesDocs | quote }}
 - name: WEB_TOKEN_DOCS_GITHUB
