@@ -73,6 +73,8 @@ config:
     basicUser: ""
   sandbox:
     provider: local
+    # -- Local sandbox git clone budget in milliseconds (API_SANDBOX_CLONE_TIMEOUT_MS). Empty uses the app default of 120000. Raise it when a shallow fetch of a large monorepo exceeds that budget and the review continues with no sandbox.
+    cloneTimeoutMs: ""
   email:
     provider: resend
     userInviteBaseUrl: ""
@@ -125,8 +127,6 @@ config:
     supportDocsUrl: https://docs.kodus.io
     supportDiscordInviteUrl: https://discord.gg/QFzwwmNmdN
     supportTalkToFounderUrl: https://cal.com/gabrielmalinosqui/30min
-    helpdeskHostname: ""
-    helpdeskPort: 3004
     ruleFilesDocs: https://docs.kodus.io/how_to_use/en/code_review/configs/rules_file_detection
     tokenDocs:
       github: https://docs.kodus.io/how_to_use/en/code_review/general_config/github_pat

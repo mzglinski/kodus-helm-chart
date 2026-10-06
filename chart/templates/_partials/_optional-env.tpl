@@ -48,6 +48,10 @@
 {{- define "kodus.sandboxEnv" -}}
 - name: SANDBOX_PROVIDER
   value: {{ .Values.config.sandbox.provider | quote }}
+{{- if .Values.config.sandbox.cloneTimeoutMs }}
+- name: API_SANDBOX_CLONE_TIMEOUT_MS
+  value: {{ .Values.config.sandbox.cloneTimeoutMs | quote }}
+{{- end }}
 {{- end -}}
 
 {{- define "kodus.emailEnv" -}}
