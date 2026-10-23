@@ -23,6 +23,8 @@
   value: {{ .Values.mcpManager.nodeEnv | quote }}
 - name: API_MCP_MANAGER_NODE_ENV
   value: {{ .Values.mcpManager.nodeEnv | quote }}
+- name: OBSERVABILITY_MONGO_ENABLED
+  value: {{ .Values.global.observabilityMongoEnabled | quote }}
 - name: API_MCP_MANAGER_DATABASE_ENV
   value: {{ .Values.mcpManager.databaseEnv | quote }}
 - name: API_MCP_MANAGER_LOG_LEVEL

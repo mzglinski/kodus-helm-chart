@@ -17,6 +17,13 @@
   value: {{ .Values.config.workflow.staleJobTimeoutMinutes | quote }}
 {{- end -}}
 
+{{- define "kodus.doctorEnv" -}}
+- name: API_DOCTOR_ENABLED
+  value: {{ .Values.config.doctor.enabled | quote }}
+- name: API_DOCTOR_PORT
+  value: {{ .Values.config.doctor.port | quote }}
+{{- end -}}
+
 {{- define "kodus.runtimeFlagsEnv" -}}
 - name: BETA_FEATURES
   value: {{ .Values.global.betaFeatures | quote }}

@@ -59,6 +59,8 @@ true
   value: {{ include "kodus.cronSchedule" (dict "root" $root "enabled" $enabled "schedule" $root.Values.config.cron.spendLimitAlert) | quote }}
 - name: API_CRON_STALE_REVIEW_WATCHDOG
   value: {{ include "kodus.cronSchedule" (dict "root" $root "enabled" $enabled "schedule" $root.Values.config.cron.staleReviewWatchdog) | quote }}
+- name: API_CRON_PRUNE_LICENSE_SEATS
+  value: {{ include "kodus.cronSchedule" (dict "root" $root "enabled" $enabled "schedule" $root.Values.config.cron.pruneLicenseSeats) | quote }}
 - name: API_CRON_SSO_TEST_SESSION_CLEANUP
   value: {{ include "kodus.cronSchedule" (dict "root" $root "enabled" $enabled "schedule" $root.Values.config.cron.ssoTestSessionCleanup) | quote }}
 - name: API_CRON_CLASSIFY_ORPHANED_SESSIONS
