@@ -41,6 +41,12 @@
   value: {{ .Values.mcpManager.composioBaseUrl | quote }}
 - name: API_MCP_MANAGER_REDIRECT_URI
   value: {{ include "kodus.mcpManagerPublicRedirectUri" . | quote }}
+{{- /* Session tokens are signed with jwt-secret. MCP Manager verifies them with API_JWT_SECRET. */}}
+- name: API_JWT_SECRET
+  valueFrom:
+    secretKeyRef:
+      name: {{ include "kodus.secretName" . }}
+      key: jwt-secret
 - name: API_MCP_MANAGER_JWT_SECRET
   valueFrom:
     secretKeyRef:

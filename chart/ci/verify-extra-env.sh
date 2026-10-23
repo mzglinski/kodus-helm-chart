@@ -182,6 +182,9 @@ assert_absent Deployment kodus-web exact ONLY_API "${manifest}"
 
 assert_values Deployment kodus-mcp-manager exact ONLY_MCP "value:from-mcp" "${manifest}"
 assert_absent Deployment kodus-mcp-manager exact ONLY_API "${manifest}"
+# Session tokens are signed with jwt-secret. MCP Manager verifies them with API_JWT_SECRET.
+assert_values Deployment kodus-api exact API_JWT_SECRET "valueFrom:secretKeyRef:kodus-secrets:jwt-secret" "${manifest}"
+assert_values Deployment kodus-mcp-manager exact API_JWT_SECRET "valueFrom:secretKeyRef:kodus-secrets:jwt-secret" "${manifest}"
 
 assert_values Deployment kodus-cron-api exact ONLY_CRON_API "value:from-cron-api" "${manifest}"
 assert_values Deployment kodus-cron-api exact SHARED "value:from-global" "${manifest}"
