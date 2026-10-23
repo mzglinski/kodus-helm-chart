@@ -41,6 +41,11 @@
   value: {{ .Values.mcpManager.composioBaseUrl | quote }}
 - name: API_MCP_MANAGER_REDIRECT_URI
   value: {{ include "kodus.mcpManagerPublicRedirectUri" . | quote }}
+- name: API_JWT_SECRET
+  valueFrom:
+    secretKeyRef:
+      name: {{ include "kodus.secretName" . }}
+      key: jwt-secret
 - name: API_MCP_MANAGER_JWT_SECRET
   valueFrom:
     secretKeyRef:
