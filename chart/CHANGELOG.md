@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.6](https://github.com/mzglinski/kodus-helm-chart/compare/v0.4.5...v0.4.6) (2026-10-23)
+
+
+### Bug Fixes
+
+* verify MCP session tokens with the API JWT secret ([#95](https://github.com/mzglinski/kodus-helm-chart/issues/95)) ([2b04404](https://github.com/mzglinski/kodus-helm-chart/commit/2b04404d623c86c0b7947e2dd3a04724a2928d46))
+
 ## [0.4.5](https://github.com/mzglinski/kodus-helm-chart/compare/v0.4.4...v0.4.5) (2026-10-23)
 
 
