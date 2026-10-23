@@ -268,6 +268,8 @@ secretKeyRef:
   value: {{ .Values.global.mcpServerEnabled | quote }}
 - name: KODUS_TELEMETRY_DISABLED
   value: {{ .Values.global.telemetryDisabled | quote }}
+- name: OBSERVABILITY_MONGO_ENABLED
+  value: {{ .Values.global.observabilityMongoEnabled | quote }}
 - name: RELEASE_VERSION
   value: {{ .Values.image.tag | default .Chart.AppVersion | quote }}
 {{- if .Values.externalPostgresql.uri }}
@@ -371,6 +373,7 @@ secretKeyRef:
 {{ include "kodus.platformIntegrationEnv" . }}
 {{ include "kodus.llmEnv" . }}
 {{ include "kodus.langfuseEnv" . }}
+{{ include "kodus.doctorEnv" . }}
 - name: COMPONENT_TYPE
   value: api
 - name: API_URL
@@ -403,6 +406,7 @@ secretKeyRef:
 {{ include "kodus.platformIntegrationEnv" . }}
 {{ include "kodus.llmEnv" . }}
 {{ include "kodus.langfuseEnv" . }}
+{{ include "kodus.doctorEnv" . }}
 - name: COMPONENT_TYPE
   value: api
 - name: API_URL

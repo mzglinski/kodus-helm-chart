@@ -112,6 +112,7 @@ API ingress paths are gated on `api.enabled` and `webhooks.enabled` so disabled 
 | config.cron.kodyLearning | string | `"0 0 * * 6"` | Saturday at 00:00 UTC (API_CRON_KODY_LEARNING). |
 | config.cron.kodyRulesDetectorSweepEnabled | bool | `true` |  |
 | config.cron.orgReport | string | `"0 9 1 * *"` | 1st of each month at 09:00 UTC. Organization review report email (API_CRON_ORG_REPORT). |
+| config.cron.pruneLicenseSeats | string | `"0 4 * * *"` | Daily at 04:00 America/Sao_Paulo. Releases license seats held by users who left the git organization (API_CRON_PRUNE_LICENSE_SEATS). Only organizations that opted in are updated. |
 | config.cron.repoReport | string | `"0 9 1,16 * *"` | 1st and 16th at 09:00 UTC. Per-repository review digest email (API_CRON_REPO_REPORT). |
 | config.cron.spendLimitAlert | string | `"0 * * * *"` | Every hour (API_CRON_SPEND_LIMIT_ALERT). |
 | config.cron.ssoTestSessionCleanup | string | `"0 1 * * *"` | Daily cleanup of expired SSO test sessions, 1 AM UTC (API_CRON_SSO_TEST_SESSION_CLEANUP). |
@@ -123,6 +124,8 @@ API ingress paths are gated on `api.enabled` and `webhooks.enabled` so disabled 
 | config.docs.enabled | bool | `false` |  |
 | config.docs.path | string | `"/docs"` |  |
 | config.docs.specPath | string | `"/openapi.json"` |  |
+| config.doctor.enabled | bool | `true` | Start the loopback self-hosted doctor listener in the API process (API_DOCTOR_ENABLED). kodus-installer doctor-k8s.sh calls it with kubectl exec. |
+| config.doctor.port | int | `3335` | Loopback port of the doctor listener (API_DOCTOR_PORT). |
 | config.email.provider | string | `"resend"` | Notifications email provider (API_NOTIFICATION_EMAIL_PROVIDER): resend or smtp. |
 | config.email.smtp.from | string | `"noreply@notifications.kodus.io"` | SMTP notifications sender address (API_SMTP_FROM). |
 | config.email.smtp.host | string | `""` | SMTP host (API_SMTP_HOST). |
@@ -213,6 +216,7 @@ API ingress paths are gated on `api.enabled` and `webhooks.enabled` so disabled 
 | global.logPretty | bool | `false` | Pretty-print logs when true; JSON when false (API_LOG_PRETTY). |
 | global.mcpServerEnabled | bool | `false` | Enable MCP integration (API_MCP_SERVER_ENABLED). When false, MCP code paths are skipped. |
 | global.nodeEnv | string | `"production"` | Runtime mode (API_NODE_ENV). Self-hosted installs use production. development emits the SSO handoff cookie without Domain or Secure, so a web app on another host cannot read it. |
+| global.observabilityMongoEnabled | bool | `false` | Write application logs and traces to MongoDB (OBSERVABILITY_MONGO_ENABLED). Matches the installer default of false. An unset value leaves the exporter on. |
 | global.pod.affinity | object | `{}` |  |
 | global.pod.annotations | object | `{}` |  |
 | global.pod.labels | object | `{}` |  |

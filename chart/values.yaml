@@ -34,6 +34,8 @@ global:
   telemetryDisabled: true
   # -- Heartbeat receiver override (KODUS_TELEMETRY_ENDPOINT). Leave empty to use https://telemetry.kodus.io/v1/heartbeat.
   telemetryEndpoint: ""
+  # -- Write application logs and traces to MongoDB (OBSERVABILITY_MONGO_ENABLED). Matches the installer default of false. An unset value leaves the exporter on.
+  observabilityMongoEnabled: false
   # Default pod termination grace for non-worker components (seconds).
   terminationGracePeriodSeconds: 30
   # Chart-wide pod security defaults (images run as UID 1000).
@@ -90,6 +92,11 @@ config:
     provider: local
     # -- Local sandbox git clone budget in milliseconds (API_SANDBOX_CLONE_TIMEOUT_MS). Empty uses the app default of 120000. Raise it when a shallow fetch of a large monorepo exceeds that budget and the review continues with no sandbox.
     cloneTimeoutMs: ""
+  doctor:
+    # -- Start the loopback self-hosted doctor listener in the API process (API_DOCTOR_ENABLED). kodus-installer doctor-k8s.sh calls it with kubectl exec.
+    enabled: true
+    # -- Loopback port of the doctor listener (API_DOCTOR_PORT).
+    port: 3335
   email:
     # -- Notifications email provider (API_NOTIFICATION_EMAIL_PROVIDER): resend or smtp.
     provider: resend
@@ -131,6 +138,8 @@ config:
     spendLimitAlert: "0 * * * *"
     # -- Reaps code review executions stuck IN_PROGRESS and finalizes their orphaned platform check runs (API_CRON_STALE_REVIEW_WATCHDOG).
     staleReviewWatchdog: "*/30 * * * *"
+    # -- Daily at 04:00 America/Sao_Paulo. Releases license seats held by users who left the git organization (API_CRON_PRUNE_LICENSE_SEATS). Only organizations that opted in are updated.
+    pruneLicenseSeats: "0 4 * * *"
     # -- Daily cleanup of expired SSO test sessions, 1 AM UTC (API_CRON_SSO_TEST_SESSION_CLEANUP).
     ssoTestSessionCleanup: "0 1 * * *"
     # -- Reclassifies orphaned review sessions every 15 minutes (API_CRON_CLASSIFY_ORPHANED_SESSIONS). Cloud-only.
