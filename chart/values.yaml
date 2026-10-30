@@ -134,6 +134,10 @@ config:
     orgReport: "0 9 1 * *"
     # -- 1st and 16th at 09:00 UTC. Per-repository review digest email (API_CRON_REPO_REPORT).
     repoReport: "0 9 1,16 * *"
+    # -- Daily at 06:00 UTC. Pauses ignored and noisy Kody Rules where that setting is on (API_CRON_KODY_RULES_AUTO_PAUSE). The analytics worker runs this job.
+    kodyRulesAutoPause: "0 6 * * *"
+    # -- Mondays at 09:00 UTC. Weekly email of Kody Rules paused since the previous digest (API_CRON_KODY_RULES_AUTO_PAUSE_DIGEST). The analytics worker runs this job.
+    kodyRulesAutoPauseDigest: "0 9 * * 1"
     # -- Every hour (API_CRON_SPEND_LIMIT_ALERT).
     spendLimitAlert: "0 * * * *"
     # -- Reaps code review executions stuck IN_PROGRESS and finalizes their orphaned platform check runs (API_CRON_STALE_REVIEW_WATCHDOG).

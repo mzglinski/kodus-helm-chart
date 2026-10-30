@@ -55,6 +55,10 @@ true
   value: {{ include "kodus.cronSchedule" (dict "root" $root "enabled" $enabled "schedule" $root.Values.config.cron.orgReport) | quote }}
 - name: API_CRON_REPO_REPORT
   value: {{ include "kodus.cronSchedule" (dict "root" $root "enabled" $enabled "schedule" $root.Values.config.cron.repoReport) | quote }}
+- name: API_CRON_KODY_RULES_AUTO_PAUSE
+  value: {{ include "kodus.cronSchedule" (dict "root" $root "enabled" $enabled "schedule" $root.Values.config.cron.kodyRulesAutoPause) | quote }}
+- name: API_CRON_KODY_RULES_AUTO_PAUSE_DIGEST
+  value: {{ include "kodus.cronSchedule" (dict "root" $root "enabled" $enabled "schedule" $root.Values.config.cron.kodyRulesAutoPauseDigest) | quote }}
 - name: API_CRON_SPEND_LIMIT_ALERT
   value: {{ include "kodus.cronSchedule" (dict "root" $root "enabled" $enabled "schedule" $root.Values.config.cron.spendLimitAlert) | quote }}
 - name: API_CRON_STALE_REVIEW_WATCHDOG
