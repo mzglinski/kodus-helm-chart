@@ -110,6 +110,8 @@ API ingress paths are gated on `api.enabled` and `webhooks.enabled` so disabled 
 | config.cron.checkIfPrShouldBeApproved | string | `"*/2 * * * *"` | Every 2 minutes (API_CRON_CHECK_IF_PR_SHOULD_BE_APPROVED). |
 | config.cron.classifyOrphanedSessions | string | `"0 */15 * * * *"` | Reclassifies orphaned review sessions every 15 minutes (API_CRON_CLASSIFY_ORPHANED_SESSIONS). Cloud-only. |
 | config.cron.kodyLearning | string | `"0 0 * * 6"` | Saturday at 00:00 UTC (API_CRON_KODY_LEARNING). |
+| config.cron.kodyRulesAutoPause | string | `"0 6 * * *"` | Daily at 06:00 UTC. Pauses ignored and noisy Kody Rules where that setting is on (API_CRON_KODY_RULES_AUTO_PAUSE). The analytics worker runs this job. |
+| config.cron.kodyRulesAutoPauseDigest | string | `"0 9 * * 1"` | Mondays at 09:00 UTC. Weekly email of Kody Rules paused since the previous digest (API_CRON_KODY_RULES_AUTO_PAUSE_DIGEST). The analytics worker runs this job. |
 | config.cron.kodyRulesDetectorSweepEnabled | bool | `true` |  |
 | config.cron.orgReport | string | `"0 9 1 * *"` | 1st of each month at 09:00 UTC. Organization review report email (API_CRON_ORG_REPORT). |
 | config.cron.pruneLicenseSeats | string | `"0 4 * * *"` | Daily at 04:00 America/Sao_Paulo. Releases license seats held by users who left the git organization (API_CRON_PRUNE_LICENSE_SEATS). Only organizations that opted in are updated. |
