@@ -192,7 +192,13 @@ config:
 llm:
   # -- Model id for env-mode LLM (API_LLM_PROVIDER_MODEL). "auto" lets the router pick per task.
   providerModel: auto
-  # -- OpenAI-compatible endpoint override, such as a local model proxy (API_OPENAI_FORCE_BASE_URL).
+  # -- Provider of that model (API_LLM_PROVIDER): openai, openai_compatible, anthropic, anthropic_compatible, google_gemini, or google_vertex. Empty keeps the model-name inference. Requires providerModel to be a model id.
+  provider: ""
+  # -- Endpoint for API_LLM_PROVIDER (API_LLM_BASE_URL). openai_compatible and anthropic_compatible need one. Empty falls back to openaiForceBaseUrl for openai and openai_compatible.
+  baseUrl: ""
+  # -- Reasoning effort for the env model (API_LLM_REASONING_EFFORT): none, low, medium, or high. Requires provider. Empty uses the model family default.
+  reasoningEffort: ""
+  # -- Legacy OpenAI-compatible endpoint (API_OPENAI_FORCE_BASE_URL). Used when provider is empty, and as the fallback endpoint for openai and openai_compatible.
   openaiForceBaseUrl: ""
   # -- Temperature for every LLM call in env-mode (API_LLM_TEMPERATURE_OVERRIDE). Set this when the model only accepts a fixed temperature, such as 1 for some reasoning models.
   temperatureOverride: ""
@@ -485,8 +491,11 @@ ingress:
 secrets:
   existingSecret: ""
   keys:
-    # -- Secret key for API_OPEN_AI_API_KEY. Required when the model is an OpenAI model.
+    # -- Secret key for API_LLM_API_KEY. Used when llm.provider is set. For google_vertex this is the base64 service-account JSON; leave it empty to use Application Default Credentials. anthropic_compatible has no other key.
+    llmApiKey: llm-api-key
+    # -- Secret key for API_OPEN_AI_API_KEY. Legacy key for the env model, and the fallback for openai and openai_compatible when llm-api-key is empty. Also the platform embeddings key.
     openaiApiKey: openai-api-key
+    # -- Secret key for API_ANTHROPIC_API_KEY. Fallback for llm.provider anthropic when llm-api-key is empty.
     anthropicApiKey: anthropic-api-key
     googleAiApiKey: google-ai-api-key
     geminiApiKey: gemini-api-key
