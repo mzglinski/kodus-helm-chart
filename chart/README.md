@@ -274,12 +274,15 @@ API ingress paths are gated on `api.enabled` and `webhooks.enabled` so disabled 
 | langfuse.enabled | bool | `false` | Set LANGFUSE_TRACING=true when enabled (app also requires public + secret keys). |
 | langfuse.environment | string | `""` | Trace environment label. When empty, the app falls back to API_NODE_ENV / development. |
 | langfuse.publicKey | string | `""` | Langfuse project public key (pk-…). Not a Secret; pair with secrets.keys.langfuseSecretKey. |
+| llm.baseUrl | string | `""` | Endpoint for API_LLM_PROVIDER (API_LLM_BASE_URL). openai_compatible and anthropic_compatible need one. Empty falls back to openaiForceBaseUrl for openai and openai_compatible. |
 | llm.cerebras.baseUrl | string | `"https://api.cerebras.ai/v1"` |  |
 | llm.google.provider | string | `"gemini"` | Google AI provider (API_GOOGLE_AI_PROVIDER): gemini (AI Studio) or vertex (Vertex AI). |
 | llm.google.vertexLocation | string | `"us-central1"` |  |
 | llm.groq.baseUrl | string | `"https://api.groq.com/openai/v1"` |  |
-| llm.openaiForceBaseUrl | string | `""` | OpenAI-compatible endpoint override, such as a local model proxy (API_OPENAI_FORCE_BASE_URL). |
+| llm.openaiForceBaseUrl | string | `""` | Legacy OpenAI-compatible endpoint (API_OPENAI_FORCE_BASE_URL). Used when provider is empty, and as the fallback endpoint for openai and openai_compatible. |
+| llm.provider | string | `""` | Provider of that model (API_LLM_PROVIDER): openai, openai_compatible, anthropic, anthropic_compatible, google_gemini, or google_vertex. Empty keeps the model-name inference. Requires providerModel to be a model id. |
 | llm.providerModel | string | `"auto"` | Model id for env-mode LLM (API_LLM_PROVIDER_MODEL). "auto" lets the router pick per task. |
+| llm.reasoningEffort | string | `""` | Reasoning effort for the env model (API_LLM_REASONING_EFFORT): none, low, medium, or high. Requires provider. Empty uses the model family default. |
 | llm.temperatureOverride | string | `""` | Temperature for every LLM call in env-mode (API_LLM_TEMPERATURE_OVERRIDE). Set this when the model only accepts a fixed temperature, such as 1 for some reasoning models. |
 | llm.trustJsonSchemaBaseUrls | string | `""` | Comma-separated base URL substrings trusted for native json_schema output on OpenAI-compatible BYOK providers (API_TRUST_JSON_SCHEMA_BASE_URLS). Leave empty unless the proxy accepts json_schema. |
 | mcpManager.affinity | object | `{}` |  |
@@ -305,7 +308,7 @@ API ingress paths are gated on `api.enabled` and `webhooks.enabled` so disabled 
 | publicUrls.api | string | `""` |  |
 | publicUrls.web | string | `""` |  |
 | secrets.existingSecret | string | `""` |  |
-| secrets.keys.anthropicApiKey | string | `"anthropic-api-key"` |  |
+| secrets.keys.anthropicApiKey | string | `"anthropic-api-key"` | Secret key for API_ANTHROPIC_API_KEY. Fallback for llm.provider anthropic when llm-api-key is empty. |
 | secrets.keys.apiDocsBasicPass | string | `"api-docs-basic-pass"` |  |
 | secrets.keys.cerebrasApiKey | string | `"cerebras-api-key"` |  |
 | secrets.keys.e2bKey | string | `"e2b-key"` | Secret key for API_E2B_KEY. Required when the sandbox provider is e2b. |
@@ -316,12 +319,13 @@ API ingress paths are gated on `api.enabled` and `webhooks.enabled` so disabled 
 | secrets.keys.googleAiApiKey | string | `"google-ai-api-key"` |  |
 | secrets.keys.groqApiKey | string | `"groq-api-key"` |  |
 | secrets.keys.langfuseSecretKey | string | `"langfuse-secret-key"` |  |
+| secrets.keys.llmApiKey | string | `"llm-api-key"` | Secret key for API_LLM_API_KEY. Used when llm.provider is set. For google_vertex this is the base64 service-account JSON; leave it empty to use Application Default Credentials. anthropic_compatible has no other key. |
 | secrets.keys.mcpManagerComposioApiKey | string | `"mcp-manager-composio-api-key"` |  |
 | secrets.keys.moonshotApiKey | string | `"moonshot-api-key"` | Secret key for API_MOONSHOT_API_KEY (Kimi). Cloud-only; self-hosted does not use the Moonshot demo path. |
 | secrets.keys.morphllmApiKey | string | `"morphllm-api-key"` | Secret key for API_MORPHLLM_API_KEY. When set, suggested edits are applied with MorphLLM instead of the main model. |
 | secrets.keys.novitaAiApiKey | string | `"novita-ai-api-key"` |  |
 | secrets.keys.openRouterApiKey | string | `"open-router-api-key"` | Secret key for API_OPEN_ROUTER_API_KEY. |
-| secrets.keys.openaiApiKey | string | `"openai-api-key"` | Secret key for API_OPEN_AI_API_KEY. Required when the model is an OpenAI model. |
+| secrets.keys.openaiApiKey | string | `"openai-api-key"` | Secret key for API_OPEN_AI_API_KEY. Legacy key for the env model, and the fallback for openai and openai_compatible when llm-api-key is empty. Also the platform embeddings key. |
 | secrets.keys.resendApiKey | string | `"resend-api-key"` | Secret key for RESEND_API_KEY when email.provider is resend. |
 | secrets.keys.smtpPass | string | `"smtp-pass"` | Secret key for API_SMTP_PASS. |
 | secrets.keys.vertexAiApiKey | string | `"vertex-ai-api-key"` | Secret key for API_VERTEX_AI_API_KEY, a base64-encoded Vertex service account JSON. Leave unset to use Application Default Credentials. |

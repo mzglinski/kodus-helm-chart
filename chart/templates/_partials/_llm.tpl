@@ -1,6 +1,18 @@
 {{- define "kodus.llmEnv" -}}
 - name: API_LLM_PROVIDER_MODEL
   value: {{ .Values.llm.providerModel | quote }}
+{{- if .Values.llm.provider }}
+- name: API_LLM_PROVIDER
+  value: {{ .Values.llm.provider | quote }}
+{{- end }}
+{{- if .Values.llm.baseUrl }}
+- name: API_LLM_BASE_URL
+  value: {{ .Values.llm.baseUrl | quote }}
+{{- end }}
+{{- if .Values.llm.reasoningEffort }}
+- name: API_LLM_REASONING_EFFORT
+  value: {{ .Values.llm.reasoningEffort | quote }}
+{{- end }}
 {{- if .Values.llm.openaiForceBaseUrl }}
 - name: API_OPENAI_FORCE_BASE_URL
   value: {{ .Values.llm.openaiForceBaseUrl | quote }}
@@ -21,6 +33,7 @@
   value: {{ .Values.llm.groq.baseUrl | quote }}
 - name: API_CEREBRAS_BASE_URL
   value: {{ .Values.llm.cerebras.baseUrl | quote }}
+{{ include "kodus.optionalSecretEnv" (dict "root" . "name" "API_LLM_API_KEY" "key" .Values.secrets.keys.llmApiKey) }}
 {{ include "kodus.optionalSecretEnv" (dict "root" . "name" "API_OPEN_AI_API_KEY" "key" .Values.secrets.keys.openaiApiKey) }}
 {{ include "kodus.optionalSecretEnv" (dict "root" . "name" "API_ANTHROPIC_API_KEY" "key" .Values.secrets.keys.anthropicApiKey) }}
 {{ include "kodus.optionalSecretEnv" (dict "root" . "name" "API_GOOGLE_AI_API_KEY" "key" .Values.secrets.keys.googleAiApiKey) }}
