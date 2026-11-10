@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.10](https://github.com/mzglinski/kodus-helm-chart/compare/v0.4.9...v0.4.10) (2026-11-10)
+
+
+### Bug Fixes
+
+* **deps:** update dependency kodustech/kodus-ai to v2.2.10 ([#105](https://github.com/mzglinski/kodus-helm-chart/issues/105)) ([47a4f9d](https://github.com/mzglinski/kodus-helm-chart/commit/47a4f9d9c01e01f1fcbe197f16708fec81589384))
+
 ## [0.4.9](https://github.com/mzglinski/kodus-helm-chart/compare/v0.4.8...v0.4.9) (2026-11-03)
 
 
