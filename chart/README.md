@@ -119,6 +119,7 @@ API ingress paths are gated on `api.enabled` and `webhooks.enabled` so disabled 
 | config.cron.spendLimitAlert | string | `"0 * * * *"` | Every hour (API_CRON_SPEND_LIMIT_ALERT). |
 | config.cron.ssoTestSessionCleanup | string | `"0 1 * * *"` | Daily cleanup of expired SSO test sessions, 1 AM UTC (API_CRON_SSO_TEST_SESSION_CLEANUP). |
 | config.cron.staleReviewWatchdog | string | `"*/30 * * * *"` | Reaps code review executions stuck IN_PROGRESS and finalizes their orphaned platform check runs (API_CRON_STALE_REVIEW_WATCHDOG). |
+| config.cron.syncAllRepositories | string | `"*/10 * * * *"` | Every 10 minutes (API_CRON_SYNC_ALL_REPOSITORIES). Adds repositories created after a team turned on review of every repository its git integration can see. The API runs this job. |
 | config.cron.syncCodeReviewReactions | string | `"0 0 * * *"` | Daily at 00:00 UTC (API_CRON_SYNC_CODE_REVIEW_REACTIONS). |
 | config.cron.workflowStaleJobReaper | string | `"0 */10 * * * *"` | Cadence of the reaper that fails workflow jobs left PROCESSING after a worker is killed (WORKFLOW_STALE_JOB_REAPER_CRON). WORKFLOW_STALE_JOB_TIMEOUT_MINUTES still decides which jobs are eligible. |
 | config.developmentMode | bool | `false` | Bypass permission validation (API_DEVELOPMENT_MODE). Cloud development only. |
