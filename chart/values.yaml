@@ -88,7 +88,7 @@ config:
     # -- Basic auth user for API docs (API_DOCS_BASIC_USER). Leave empty to leave the docs open.
     basicUser: ""
   sandbox:
-    # -- Sandbox provider (SANDBOX_PROVIDER): auto, e2b, local, or none.
+    # -- Sandbox provider (SANDBOX_PROVIDER): auto, e2b, local, or null. null disables the sandbox.
     provider: local
     # -- Local sandbox git clone budget in milliseconds (API_SANDBOX_CLONE_TIMEOUT_MS). Empty uses the app default of 120000. Raise it when a shallow fetch of a large monorepo exceeds that budget and the review continues with no sandbox.
     cloneTimeoutMs: ""

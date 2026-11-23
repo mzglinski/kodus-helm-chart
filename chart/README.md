@@ -147,7 +147,7 @@ API ingress paths are gated on `api.enabled` and `webhooks.enabled` so disabled 
 | config.rateInterval | int | `1000` | Rate limit interval in milliseconds (API_RATE_INTERVAL). |
 | config.rateMaxRequest | int | `100` |  |
 | config.sandbox.cloneTimeoutMs | string | `""` | Local sandbox git clone budget in milliseconds (API_SANDBOX_CLONE_TIMEOUT_MS). Empty uses the app default of 120000. Raise it when a shallow fetch of a large monorepo exceeds that budget and the review continues with no sandbox. |
-| config.sandbox.provider | string | `"local"` | Sandbox provider (SANDBOX_PROVIDER): auto, e2b, local, or none. |
+| config.sandbox.provider | string | `"local"` | Sandbox provider (SANDBOX_PROVIDER): auto, e2b, local, or null. null disables the sandbox. |
 | config.web.nodeEnv | string | `"self-hosted"` |  |
 | config.web.ruleFilesDocs | string | `"https://docs.kodus.io/how_to_use/en/code_review/configs/rules_file_detection"` | Documentation URL for rule-file detection, shown when configuring code review rules (WEB_RULE_FILES_DOCS). |
 | config.web.supportDiscordInviteUrl | string | `"https://discord.gg/QFzwwmNmdN"` |  |
